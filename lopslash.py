@@ -56,9 +56,11 @@ async def saucefind(ctx, message: discord.Message):
             embed.set_thumbnail(url=results[0].thumbnail)
             for r in results:
                 if r.index is not None and r.url is not None:
-                    embed.add_field(name=f"{r.index} | {r.similarity}%"
-                                         + (f" | {r.author_name}" if r.author_name is not None else ""),
-                                    value=f"{r.url}",
+                    temp_authname = r.author_name if r.author_name is not None else "unknown"
+                    temp_title = r.title if r.title is not None else "untitled"
+
+                    embed.add_field(name=f"{r.index} | {r.similarity}%",
+                                    value=f"[{temp_authname} - {temp_title}]({r.url})",
                                     inline=False)
 
             embed.set_footer(text=f"limit {results.short_remaining}s {results.long_remaining}d")
@@ -141,4 +143,4 @@ async def todoaddtask(ctx, message: discord.Message):
         print(error)
 
 
-bot.run(os.getenv("BOTTOKEN"))
+bot.run(os.getenv("LOPTOKEN"))
