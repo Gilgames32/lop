@@ -56,11 +56,9 @@ async def saucefind(ctx, message: discord.Message):
             embed.set_thumbnail(url=results[0].thumbnail)
             for r in results:
                 if r.index is not None and r.url is not None:
-                    temp_authname = r.author_name if r.author_name is not None else "unknown"
-                    temp_title = r.title if r.title is not None else "untitled"
-
-                    embed.add_field(name=f"{r.index} | {r.similarity}%",
-                                    value=f"[{temp_authname} - {temp_title}]({r.url})",
+                    embed.add_field(name=f"{r.index} | {r.similarity}%"
+                                         + (f" | {r.author_name}" if r.author_name is not None else ""),
+                                    value=f"{r.url}",
                                     inline=False)
 
             embed.set_footer(text=f"limit {results.short_remaining}s {results.long_remaining}d")
@@ -79,7 +77,7 @@ class SIButtons(discord.ui.View):
         self.piclink = piclink
 
         google_button = discord.ui.Button(label="Google", style=discord.ButtonStyle.link,
-                                          url=f"https://images.google.com/searchbyimage?image_url={piclink}")
+                                          url=f"https://lens.google.com/uploadbyurl?url={piclink}")
         saucenao_button = discord.ui.Button(label="SauceNAO", style=discord.ButtonStyle.link,
                                             url=f"https://saucenao.com/search.php?db=999&url={piclink}")
         yandex_button = discord.ui.Button(label="Yandex", style=discord.ButtonStyle.link,
