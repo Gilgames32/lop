@@ -77,7 +77,7 @@ class SIButtons(discord.ui.View):
         self.piclink = piclink
 
         google_button = discord.ui.Button(label="Google", style=discord.ButtonStyle.link,
-                                          url=f"https://lens.google.com/uploadbyurl?url={piclink}")
+                                          url=f"https://www.google.com/searchbyimage?sbisrc=1&image_url={piclink}")
         saucenao_button = discord.ui.Button(label="SauceNAO", style=discord.ButtonStyle.link,
                                             url=f"https://saucenao.com/search.php?db=999&url={piclink}")
         yandex_button = discord.ui.Button(label="Yandex", style=discord.ButtonStyle.link,
