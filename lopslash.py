@@ -1,24 +1,54 @@
-# https://guide.pycord.dev/interactions/
-import discord
+# from discord_webhook import DiscordWebhook
 import os
+import discord
+from discord import app_commands
 from dotenv import load_dotenv
+import feedparser
 from pysaucenao import SauceNao
 from todoist_api_python.api_async import TodoistAPIAsync
 
 
+# init
 load_dotenv()
-bot = discord.Bot(debug_guilds=[834100481839726693])
+
+# const
+labowor = discord.Object(id=834100481839726693)
+webhookurl = os.getenv("WEBHOOK32")
 dev = 954419840251199579
+
 sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
+
 todoapi = TodoistAPIAsync(os.getenv("TODOISTTOKEN"))
 todo_inbox = "2262995514"
 todo_dcsection = "103174395"
 
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
 
-async def errorrespond(ctx, error):
+
+# UTIL
+@client.event
+async def setup_hook():
+    # await tree.sync(guild=labowor)
+    print("Command tree syncing is recommended")
+
+
+@tree.command(name="sync", description="Sync the command tree", guild=labowor)
+async def first_command(interaction: discord.Interaction):
+    await tree.sync(guild=labowor)
+    await interaction.response.send_message("Command tree synced", ephemeral=True)
+
+
+@client.event
+async def on_ready():
+    print(f"Logged in as {client.user}")
+
+
+async def errorrespond(interaction: discord.Interaction, error):
     embed = discord.Embed(color=0x5865f2)
     embed.add_field(name="Error", value=error, inline=False)
-    await ctx.respond(embed=embed, ephemeral=True)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 def getattachmenturls(message):
@@ -32,20 +62,66 @@ def getattachmenturls(message):
     return piclinks
 
 
-@bot.event
-async def on_ready():
-    print(f"{bot.user} reports for a moderate amount trolling")
+async def devcheck(interaction: discord.Interaction):
+    if interaction.user.id == dev:
+        return True
+    else:
+        await errorrespond(interaction, f"Only <@{dev}> is allowed to use this command")
+        return False
 
 
-@bot.message_command(name="SauceNAO")
-async def saucefind(ctx, message: discord.Message):
+class Panik(discord.ui.View):
+    @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
+    async def shutdown(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not await devcheck(interaction):
+            return
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        await interaction.message.delete()
+        quit()
+
+    @discord.ui.button(emoji="✖", style=discord.ButtonStyle.red)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not await devcheck(interaction):
+            return
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        await interaction.message.delete()
+
+
+@tree.command(name="panic", description="Shut down the app", guild=labowor)
+async def panic(interaction: discord.Interaction):
+    if not await devcheck(interaction):
+        return
+    await interaction.response.send_message(view=Panik(), ephemeral=False)
+
+
+@tree.command(name="flora", description="debug", guild=labowor)
+async def test(interaction: discord.Interaction):
+    await interaction.response.send_message('Nya!')
+
+
+# TWOKINDS RSS
+@tree.command(name="twokinds", description="Sends latest TwoKinds page", guild=labowor)
+async def twokinds(interaction: discord.Interaction):
+    tkfeed = feedparser.parse("https://twokinds.keenspot.com/feed.xml")
+    newpagelink = tkfeed.entries[0]["links"][0]["href"]
+    await interaction.response.send_message(newpagelink)
+
+
+# SAUCENAO IMPLEMENTATION
+@tree.context_menu(name="SauceNAO", guild=labowor)
+async def saucefind(interaction: discord.Interaction, message: discord.Message):
+    if not await devcheck(interaction):
+        return
+
     piclinks = getattachmenturls(message)
 
     if len(piclinks) == 1:
         try:
             results = await sauceapi.from_url(piclinks[0])
         except Exception as error:
-            await errorrespond(ctx, "Something went wrong")
+            await errorrespond(interaction, "Something went wrong")
             print(error)
             return
 
@@ -56,21 +132,19 @@ async def saucefind(ctx, message: discord.Message):
             embed.set_thumbnail(url=results[0].thumbnail)
             for r in results:
                 if r.index is not None and r.url is not None:
-                    temp_authname = r.author_name if r.author_name is not None else "unknown"
-                    temp_title = r.title if r.title is not None else "untitled"
-
-                    embed.add_field(name=f"{r.index} | {r.similarity}%",
-                                    value=f"[{temp_authname} - {temp_title}]({r.url})",
+                    embed.add_field(name=f"{r.index} | {r.similarity}%"
+                                         + (f" | {r.author_name}" if r.author_name is not None else ""),
+                                    value=f"{r.url}",
                                     inline=False)
 
             embed.set_footer(text=f"limit {results.short_remaining}s {results.long_remaining}d")
-            await ctx.respond(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
         else:
-            await errorrespond(ctx, "Sauce not found")
+            await errorrespond(interaction, "Sauce not found")
 
     else:
-        await errorrespond(ctx, "The message must contain one and only one attachment")
+        await errorrespond(interaction, "The message must contain one and only one attachment")
 
 
 class SIButtons(discord.ui.View):
@@ -90,19 +164,24 @@ class SIButtons(discord.ui.View):
         self.add_item(yandex_button)
 
 
-@bot.message_command(name="Search image links")
-async def imagesearch(ctx, message: discord.Message):
+# IMAGE REVERSE SEARCH LINKS
+@tree.context_menu(name="Image reverse", guild=labowor)
+async def imagesearch(interaction: discord.Interaction, message: discord.Message):
     piclinks = getattachmenturls(message)
 
     if len(piclinks) == 1:
-        await ctx.respond(view=SIButtons(piclinks[0]), ephemeral=True)
+        await interaction.response.send_message(view=SIButtons(piclinks[0]), ephemeral=True)
 
     else:
-        await errorrespond(ctx, "The message must contain one and only one attachment")
+        await errorrespond(interaction, "The message must contain one and only one attachment")
 
 
-@bot.message_command(name="Add task")
-async def todoaddtask(ctx, message: discord.Message):
+# TODOIST IMPLEMENTATION
+@tree.context_menu(name="Add task", guild=labowor)
+async def todoaddtask(interaction: discord.Interaction, message: discord.Message):
+    if not await devcheck(interaction):
+        return
+
     try:
         # E44332
         embed = discord.Embed(color=0xe44332)
@@ -131,16 +210,16 @@ async def todoaddtask(ctx, message: discord.Message):
             for att in message.attachments:
                 desc += "\n" + att.url
 
-        embed.add_field(name="Task added", value=title, inline=False)
+        embed.add_field(name="Task added", value=title, inline=True)
 
         await todoapi.add_task(content=title, description=desc.strip(), project_id=todo_inbox,
                                section_id=todo_dcsection)
 
-        await ctx.respond(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     except Exception as error:
-        await errorrespond(ctx, "Failed to add task")
+        await errorrespond(interaction, "Failed to add task")
         print(error)
 
 
-bot.run(os.getenv("LOPTOKEN"))
+client.run(os.getenv("LOPTOKEN"))
