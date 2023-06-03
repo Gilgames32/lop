@@ -19,6 +19,7 @@ dev = 954419840251199579
 sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
 downloadpath = "C:/GIL/Down/"
 stash = 1113025678632300605
+twitterformat = 969498055151865907
 esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
 
 
@@ -175,17 +176,22 @@ def getesixembed(message: discord.Message):
     return embed
 
 
+# parse url if twitter is in it
+def twlinkparse(twlink: str):
+    hosts = ["twitter", "fxtwitter", "vxtwitter"]
+    for h in hosts:
+        if twlink.startswith(f"https://{h}.com/"):
+            return twlink.replace(h, "d.fxtwitter")
+    else:
+        return None
+
 # TWITTER DOWNLOADER
 def getfxembed(message: discord.Message):
     try:
         twlink = message.content.split(" ")[0].split("?")[0]
-        hosts = ["twitter", "fxtwitter", "vxtwitter"]
-        for h in hosts:
-            if twlink.startswith(f"https://{h}.com/"):
-                fxlink = twlink.replace(h, "d.fxtwitter")
-                break
-        else:
-            return None
+        fxlink = twlinkparse(twlink)
+        if fxlink is None:
+            return
 
         response = requests.get(fxlink)
         filename = f'{twlink.split("/")[3].lower()}_{twlink.split("/")[5]}.{response.url.split(".")[-1]}'
@@ -257,5 +263,16 @@ async def on_message(message: discord.Message):
         if embed is not None:
             await message.delete()
             await message.channel.send(embed=embed, delete_after=30)
+    # MARKDOWN FORMAT TWITTER
+    elif message.channel.id == twitterformat:
+        twlink = message.content.split(" ")[0].split("?")[0]
+        fxlink = twlinkparse(twlink)
+        if fxlink is not None:
+            webhook = DiscordWebhook(url=webhookurl, 
+                                     content=f'[{twlink.split("/")[3]} on Twitter](<{twlink}>) [~]({fxlink})', 
+                                     avatar_url=message.author.avatar.url, 
+                                     username=message.author.name)
+            webhook.execute()
+            await message.delete()
 
 client.run(os.getenv("LOPTOKEN"))
