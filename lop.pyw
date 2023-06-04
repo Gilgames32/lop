@@ -17,7 +17,11 @@ labowor = discord.Object(id=834100481839726693)
 webhookurl = os.getenv("WEBHOOK32")
 dev = 954419840251199579
 sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
+
 downloadpath = "C:/GIL/Down/"
+with open("./downloadpath.txt", "r") as f:
+    downloadpath = f.read()
+
 stash = 1113025678632300605
 twitterformat = 969498055151865907
 esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
