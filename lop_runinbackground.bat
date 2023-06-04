@@ -1,2 +1,0 @@
-start "" "lop.pyw"
-exit
