@@ -267,13 +267,27 @@ async def on_message(message: discord.Message):
         if embed is not None:
             await message.delete()
             await message.channel.send(embed=embed, delete_after=30)
+
     # MARKDOWN FORMAT TWITTER
     elif message.channel.id == twitterformat:
         twlink = message.content.split(" ")[0].split("?")[0]
         fxlink = twlinkparse(twlink)
         if fxlink is not None:
+            content = f'[{twlink.split("/")[3]} on Twitter](<{twlink}>)'
+            
+            first = requests.get(fxlink).url
+            for i in range(4):
+                if i == 0:
+                    response = first
+                else:
+                    response = requests.get(f'{fxlink}/photo/{i+1}').url
+                    if response == first:
+                        break
+                
+                content += f' [{"-" if response.split(".")[-1] == "png" else "~"}]({response})'
+
             webhook = DiscordWebhook(url=webhookurl, 
-                                     content=f'[{twlink.split("/")[3]} on Twitter](<{twlink}>) [~]({fxlink})', 
+                                     content=content, 
                                      avatar_url=message.author.avatar.url, 
                                      username=message.author.name)
             webhook.execute()
