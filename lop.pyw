@@ -189,6 +189,16 @@ def twlinkparse(twlink: str):
     else:
         return None
 
+def twgallery(fxlink:str):
+    links = [requests.get(fxlink).url]
+    for i in range(1, 4):
+        responseurl = requests.get(f'{fxlink}/photo/{i+1}').url
+        if responseurl == links[0]:
+            break
+        else:
+            links.append(responseurl)
+    return links
+
 # TWITTER DOWNLOADER
 def getfxembed(message: discord.Message):
     try:
@@ -274,17 +284,9 @@ async def on_message(message: discord.Message):
         fxlink = twlinkparse(twlink)
         if fxlink is not None:
             content = f'[{twlink.split("/")[3]} on Twitter](<{twlink}>)'
-            
-            first = requests.get(fxlink).url
-            for i in range(4):
-                if i == 0:
-                    response = first
-                else:
-                    response = requests.get(f'{fxlink}/photo/{i+1}').url
-                    if response == first:
-                        break
-                
-                content += f' [{"-" if response.split(".")[-1] == "png" else "~"}]({response})'
+            gallery = twgallery(fxlink)
+            for link in gallery:
+                content += f' [{"-" if link.split(".")[-1] == "png" else "~"}]({link})'
 
             webhook = DiscordWebhook(url=webhookurl, 
                                      content=content, 
