@@ -208,14 +208,14 @@ def getfxembed(message: discord.Message):
             return
 
         response = requests.get(fxlink)
-        filename = f'{twlink.split("/")[3].lower()}_{twlink.split("/")[5]}.{response.url.split(".")[-1]}'
+        filename = f'{twlink.split("/")[3].lower()}_{twlink.split("/")[5]}.{response.url.split("?")[0].split(".")[-1]}'
         with open(downloadpath + filename, "wb") as img_file:
             img_file.write(response.content)
         embed = discord.Embed(title=f"Tweet downloaded", url=twlink, color=0x1d9bf0)
         embed.set_thumbnail(url=fxlink)
         embed.set_footer(text=downloadpath + filename)
         return embed
-    except any:
+    except Exception:
         return None
 
 
@@ -292,7 +292,7 @@ async def on_message(message: discord.Message):
                                      content=content, 
                                      avatar_url=message.author.avatar.url, 
                                      username=message.author.name)
-            webhook.execute()
             await message.delete()
+            webhook.execute()
 
 client.run(os.getenv("LOPTOKEN"))
