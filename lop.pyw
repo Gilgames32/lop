@@ -163,6 +163,17 @@ def download(link, path, filename):
         img_file.write(requests.get(link).content)
 
 
+# parse url if its an esix post
+def elinkparse(elink: str):
+    elink = elink.split("?")[0]
+    hosts = ["e621", "e926"]
+    for h in hosts:
+        if elink.startswith(f"https://{h}.net/posts/"):
+            return elink
+    else:
+        return None
+
+
 # ESIX DOWNLOADER
 def getesixembed(message: discord.Message):
     elink = message.content.split(" ")[0].split("?")[0]
@@ -182,12 +193,14 @@ def getesixembed(message: discord.Message):
 
 # parse url if twitter is in it
 def twlinkparse(twlink: str):
+    twlink = twlink.split("?")[0]
     hosts = ["twitter", "fxtwitter", "vxtwitter"]
     for h in hosts:
         if twlink.startswith(f"https://{h}.com/"):
             return twlink.replace(h, "d.fxtwitter")
     else:
         return None
+
 
 def twgallery(fxlink:str):
     links = [requests.get(fxlink).url]
@@ -198,6 +211,7 @@ def twgallery(fxlink:str):
         else:
             links.append(responseurl)
     return links
+
 
 # TWITTER DOWNLOADER
 def getfxembed(message: discord.Message):
@@ -280,18 +294,34 @@ async def on_message(message: discord.Message):
 
     # MARKDOWN FORMAT TWITTER
     elif message.channel.id == twitterformat:
-        twlink = message.content.split(" ")[0].split("?")[0]
-        fxlink = twlinkparse(twlink)
+        firstlink = message.content.split(" ")[0].split("?")[0]
+        fxlink = twlinkparse(firstlink)
+        elink = elinkparse(firstlink)
+        webhook = DiscordWebhook(   url=webhookurl, 
+                                    content="", 
+                                    avatar_url=message.author.avatar.url, 
+                                    username=message.author.name)
+
         if fxlink is not None:
-            content = f'[{twlink.split("/")[3]} on Twitter](<{twlink}>)'
+            content = f'[{firstlink.split("/")[3]} on Twitter](<{firstlink}>)'
             gallery = twgallery(fxlink)
             for link in gallery:
                 content += f' [{"-" if link.split(".")[-1] == "png" else "~"}]({link})'
 
-            webhook = DiscordWebhook(url=webhookurl, 
-                                     content=content, 
-                                     avatar_url=message.author.avatar.url, 
-                                     username=message.author.name)
+            webhook.content = content
+            await message.delete()
+            webhook.execute()
+
+        elif elink is not None:
+            eid = int(elink.split("/")[4])
+            epost = esix.posts.get(eid)
+            if epost.rating == "s":
+                elink = elink.replace("e621", "e926")
+            if "conditional_dnp" in epost.tags.artist:
+                epost.tags.artist.remove("conditional_dnp")
+            content = f'[{epost.tags.artist[0]} on {"E926" if epost.rating == "s" else "E621"}](<{elink}>)'
+            content += f' [{"-" if epost.file.ext == "png" else "~"}]({epost.file.url})'
+            webhook.content = content
             await message.delete()
             webhook.execute()
 
