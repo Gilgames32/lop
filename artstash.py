@@ -81,13 +81,13 @@ def tw_linkparse(twlink: str):
 
 # returns a list of image urls of the gallery
 def tw_gallery(fxlink: str):
-    links = [requests.get(fxlink).url]
+    links = [requests.get(fxlink).url.split("?")[0]]
     for i in range(1, 4):
-        responseurl = requests.get(f"{fxlink}/photo/{i+1}").url
+        responseurl = requests.get(f"{fxlink}/photo/{i+1}").url.split("?")[0]
         if responseurl == links[0]:
             break
         else:
-            links.append(responseurl.split("?")[0])
+            links.append(responseurl)
     return links
 
 
