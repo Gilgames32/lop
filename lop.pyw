@@ -239,7 +239,7 @@ async def on_message(message: discord.Message):
             webhook.content = twcontent
         elif elink is not None:
             webhook.content = elink
-        if webhook.content is not None:
+        if webhook.content != "":
             await message.delete()
             webhook.execute()
 
