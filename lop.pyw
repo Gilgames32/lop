@@ -145,7 +145,7 @@ async def saucefind(interaction: discord.Interaction, message: discord.Message):
 
         if len(results) != 0:
             embed = discord.Embed(
-                title=f"Sauce found",
+                title="Sauce found",
                 url=f"https://saucenao.com/search.php?db=999&url={piclinks[0]}",
                 color=0x5865F2,
             )
@@ -233,7 +233,7 @@ async def on_message(message: discord.Message):
             url=webhookurl,
             content="",
             avatar_url=message.author.avatar.url,
-            username=message.author.name,
+            username=message.author.display_name,
         )
         if twcontent is not None:
             webhook.content = twcontent
