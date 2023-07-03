@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 import feedparser
 from pysaucenao import SauceNao
 from discord_webhook import DiscordWebhook
-import artstash
+
+from urlparser import downloadpath
+from artstash import anydownload, anymkwebhook
 
 # init
 load_dotenv()
@@ -178,11 +180,11 @@ async def saucefind(interaction: discord.Interaction, message: discord.Message):
 async def ctxdown(interaction: discord.Interaction, message: discord.Message):
     if not await devcheck(interaction):
         return
-    embed = artstash.trydownloadall(message.content)
+    embed = anydownload(message.content)
     if embed is None:
         embed = errorembed(
             "The message must start with a valid link\n"
-            "Currently supported sites: twitter, e621, e926"
+            "Currently supported sites: twitter, e621, e926, pixiv"
         )
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -200,13 +202,13 @@ async def download_history(interaction: discord.Interaction, count: int):
     async for message in interaction.channel.history(limit=count):
         if message.author.bot:
             continue
-        embed = artstash.trydownloadall(message.content)
+        embed = anydownload(message.content)
         if embed is not None:
             dlcount += 1
             await message.add_reaction("🔽")
 
     embed = discord.Embed(title=f"Downloaded {dlcount} posts", color=0x5865F2)
-    embed.set_footer(text=artstash.downloadpath)
+    embed.set_footer(text=downloadpath)
     await interaction.edit_original_response(embed=embed)
 
 
@@ -219,27 +221,23 @@ async def on_message(message: discord.Message):
 
     # auto download from #to-stash
     if message.channel.id == stash_chid:
-        embed = artstash.trydownloadall(message.content)
+        embed = anydownload(message.content)
         if embed is not None:
             await message.delete()
             await message.channel.send(embed=embed, delete_after=30)
 
     # turn twitter and e6 links to better markdowns using webhooks
     elif message.channel.id == twmrkdown_chid:
-        firstlink = message.content.split(" ")[0].split("?")[0]
-        twcontent = artstash.tw_markdown(firstlink)
-        elink = artstash.esix_markdown(firstlink)
+        firstlink = message.content.split(" ")[0]
+
         webhook = DiscordWebhook(
             url=webhookurl,
             content="",
             avatar_url=message.author.avatar.url,
             username=message.author.display_name,
         )
-        if twcontent is not None:
-            webhook.content = twcontent
-        elif elink is not None:
-            webhook.content = elink
-        if webhook.content != "":
+
+        if anymkwebhook(firstlink, webhook):
             await message.delete()
             webhook.execute()
 
