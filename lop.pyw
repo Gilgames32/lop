@@ -1,4 +1,7 @@
 import os
+import sys
+os.chdir(sys.path[0])
+
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
