@@ -23,6 +23,10 @@ def esix_getpost(elink: str):
     # remove conditional dnp from artists
     if "conditional_dnp" in epost.tags.artist:
         epost.tags.artist.remove("conditional_dnp")
+
+    # if it really has no artist
+    if epost.tags.artist == []:
+        epost.tags.artist.append("unknown")
     
     return epost
 
