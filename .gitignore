@@ -1,2 +1,4 @@
 downloadpath.txt
 __pycache__/
+.venv/
+.env

@@ -1,10 +1,9 @@
-import discord
 from discord_webhook import DiscordWebhook
 import e621
 import os
 from dotenv import load_dotenv
 
-from urlparser import downloadpath, download
+from urlparser import anyembed, downloadpath, download
 
 
 # init
@@ -41,10 +40,7 @@ def esix_download(link: str):
     download(epost.file.url, downloadpath, filename)
 
     # generate embed
-    embed = discord.Embed(title=f"Post downloaded", url=link, color=0x012E56)
-    embed.set_thumbnail(url=epost.file.url)
-    embed.set_footer(text=f"{downloadpath}{filename}")
-    return embed
+    return anyembed(link, epost.file.url, filename)
 
 
 # esix markdown for webhook

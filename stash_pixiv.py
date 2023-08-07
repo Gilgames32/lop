@@ -1,8 +1,7 @@
 import requests
-import discord
 from discord_webhook import DiscordWebhook
 
-from urlparser import download, downloadpath
+from urlparser import anyembed, download, downloadpath
 
 # base header so that we dont get 403
 pixiv_baseheader = lambda x : {"referer": f"https://www.pixiv.net/member_illust.php?mode=medium&illust_id={x}"}
@@ -27,10 +26,7 @@ def pixiv_download(link: str):
     download(pixpost.imgurl, downloadpath, pixpost.filename, headers=pixiv_baseheader(pixpost.id))
     
     # generate embed
-    embed = discord.Embed(title=f"Post downloaded", url=link, color=0x0097FA)
-    embed.set_thumbnail(url=f"https://embed.pixiv.net/artwork.php?illust_id={pixpost.id}")
-    embed.set_footer(text=f"{downloadpath}{pixpost.filename}")
-    return embed
+    return anyembed(link, f"https://embed.pixiv.net/artwork.php?illust_id={pixpost.id}", pixpost.filename)
 
 
 # pixiv markdown for webhook

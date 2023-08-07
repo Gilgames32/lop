@@ -53,7 +53,7 @@ async def on_ready():
 
 # return uniform embed for errors
 def errorembed(error: str):
-    embed = discord.Embed(color=0x5865F2)
+    embed = discord.Embed(color=0xFF6700)
     embed.add_field(name="Error", value=error, inline=False)
     return embed
 
@@ -210,7 +210,7 @@ async def download_history(interaction: discord.Interaction, count: int):
             dlcount += 1
             await message.add_reaction("🔽")
 
-    embed = discord.Embed(title=f"Downloaded {dlcount} posts", color=0x5865F2)
+    embed = discord.Embed(title=f"Downloaded {dlcount} posts", color=0x009AFE)
     embed.set_footer(text=downloadpath)
     await interaction.edit_original_response(embed=embed)
 
@@ -227,7 +227,7 @@ async def on_message(message: discord.Message):
         embed = anydownload(message.content)
         if embed is not None:
             await message.delete()
-            await message.channel.send(embed=embed, delete_after=30)
+            await message.channel.send(embed=embed, delete_after=(30*60))
 
     # turn twitter and e6 links to better markdowns using webhooks
     elif message.channel.id == twmrkdown_chid:

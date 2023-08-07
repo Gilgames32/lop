@@ -1,6 +1,6 @@
 import requests
-import discord
 from discord_webhook import DiscordWebhook
+from urlparser import anyembed
 
 from urlparser import download, downloadpath, cleanurl
 
@@ -49,10 +49,7 @@ def tw_download(twlink: str):
         download(glink, downloadpath, filename)
 
     # generate embed
-    embed = discord.Embed(title=f"Tweet downloaded", url=twlink, color=0x1D9BF0)
-    embed.set_thumbnail(url=dfxlink)
-    embed.set_footer(text=downloadpath + filename)
-    return embed
+    return anyembed(twlink, dfxlink, filename)
 
 
 # twitter markdown for webhook
