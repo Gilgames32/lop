@@ -1,7 +1,7 @@
 from discord_webhook import DiscordWebhook
 from urlparser import cleanurl
 from stash_esix import esix_download, esix_markdown
-from stash_twitter import tw_download, tw_markdown
+from stash_vxtwitter import tw_download, tw_markdown
 from stash_pixiv import pixiv_download, pixiv_markdown
 
 hosts = {

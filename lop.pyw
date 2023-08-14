@@ -1,3 +1,5 @@
+LOPDEBUG = False
+
 import os
 import sys
 os.chdir(sys.path[0])
@@ -29,6 +31,11 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
+if LOPDEBUG:
+    # instead of #floof it will listen to #test
+    webhookurl = os.getenv("WEBHOOK_DEBUG")
+    twmrkdown_chid = 1012384595611746465
 
 
 # sync command tree, currently disabled, syncing is manual
