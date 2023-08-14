@@ -1,4 +1,4 @@
-LOPDEBUG = True
+LOPDEBUG = False
 
 import os
 import sys
