@@ -15,7 +15,8 @@ def download(link, path, filename, **kwargs):
 
 # generic url cleaner
 def cleanurl(url: str):
-    return url.split("?")[0]
+    split = url.split("?")[0]
+    return split[:-1] if split[-1] == "/" else split
 
 
 # generic embed for downloads

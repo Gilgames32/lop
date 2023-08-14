@@ -9,14 +9,28 @@ from urlparser import download, downloadpath, cleanurl
 def vx_jsonget(twlink: str):
     # clean trackers
     twlink = cleanurl(twlink)
+    splittwlink = twlink.split("/")
 
-    # replace with d.fxtwitter
+    # if the photo was specified
+    photo = 0
+    if len(splittwlink) > 6:
+        photo = int(splittwlink[-1])
+        twlink = "/".join(splittwlink[:-2])
+
+    # replace with api.vxtwitter
     hosts = ["twitter", "fxtwitter", "vxtwitter"]
     for h in hosts:
         if twlink.startswith(f"https://{h}.com/"):
             twlink = twlink.replace(h, "api.vxtwitter")
-    # TODO: photos/1 and shi
-    return requests.get(twlink).json()
+    
+    # getting json
+    vxjson = requests.get(twlink).json()
+    
+    # if the photo id was specified, disregard the rest
+    if photo != 0:
+        vxjson["mediaURLs"] = [ vxjson["mediaURLs"][photo-1] ]
+
+    return vxjson
 
 
 # dowload from twitter

@@ -1,11 +1,11 @@
-LOPDEBUG = False
+LOPDEBUG = True
 
 import os
 import sys
 os.chdir(sys.path[0])
 
 import discord
-from discord import app_commands
+from discord import Activity, Status, app_commands
 from dotenv import load_dotenv
 import feedparser
 from pysaucenao import SauceNao
@@ -56,6 +56,15 @@ async def sync_cmd(interaction: discord.Interaction):
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
+    if LOPDEBUG:
+        await client.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.playing,
+                name="Debugging"
+            ), 
+            status=Status.dnd
+        )
+        print("Status set, debug mode enabled")
 
 
 # return uniform embed for errors
@@ -125,6 +134,8 @@ async def panic(interaction: discord.Interaction):
 @tree.command(name="debug", description="Debug ping", guild=labowor)
 async def test(interaction: discord.Interaction):
     await interaction.response.send_message(":3")
+    if LOPDEBUG:
+        return
     await client.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching, name="Gil's nightmares"
