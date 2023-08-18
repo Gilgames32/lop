@@ -43,6 +43,16 @@ def tw_download(twlink: str):
     for i, glink in enumerate(gallery):
         # download in artist_postid_gidx.ext format
         filename = f'{vxjson["user_screen_name"]}_{vxjson["tweetID"]}{"_"+str(i) if len(gallery) > 1 else ""}.{glink.split(".")[-1]}'
+        
+        # temporary fix because rn it only loads thumbnails
+        # only for images idc about video
+        # fuck you elon
+        if glink.startswith("https://pbs.twimg.com/media/"):
+            if glink.endswith(".jpg"):
+                glink = glink.replace(".jpg", "?format=jpg&name=large")
+            elif glink.endswith(".png"):
+                glink = glink.replace(".png", "?format=png&name=large")
+        
         download(glink, downloadpath, filename)
 
     # generate embed
