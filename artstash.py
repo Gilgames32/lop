@@ -29,7 +29,10 @@ hosts = {
         "download": pixiv_download,
         "markdown": pixiv_markdown
     },
-    
+    "x.com": {
+        "download": tw_download,
+        "markdown": tw_markdown
+    }    
 }
 
 def anydownload(link: str):

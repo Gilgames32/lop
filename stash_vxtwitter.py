@@ -18,10 +18,11 @@ def vx_jsonget(twlink: str):
         twlink = "/".join(splittwlink[:-2])
 
     # replace with api.vxtwitter
-    hosts = ["twitter", "fxtwitter", "vxtwitter"]
+    hosts = ["twitter.com", "fxtwitter.com", "vxtwitter.com", "x.com"]
     for h in hosts:
-        if twlink.startswith(f"https://{h}.com/"):
-            twlink = twlink.replace(h, "api.vxtwitter")
+        if twlink.startswith(f"https://{h}/"):
+            twlink = twlink.replace(h, "api.vxtwitter.com")
+            break
     
     # getting json
     vxjson = requests.get(twlink).json()
@@ -42,7 +43,7 @@ def tw_download(twlink: str):
     gallery = vxjson["mediaURLs"]
     for i, glink in enumerate(gallery):
         # download in artist_postid_gidx.ext format
-        filename = f'{vxjson["user_screen_name"]}_{vxjson["tweetID"]}{"_"+str(i) if len(gallery) > 1 else ""}.{glink.split(".")[-1]}'
+        filename = f'{vxjson["user_screen_name"]}_{vxjson["tweetID"]}{"_"+str(i) if len(gallery) > 1 else ""}.{glink.split(".")[-1].split("?")[0]}'
         
         # temporary fix because rn it only loads thumbnails
         # only for images idc about video
