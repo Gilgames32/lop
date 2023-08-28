@@ -10,7 +10,10 @@ with open("./downloadpath.txt", "r") as f:
 # downloads an image by link, saves to path as filename
 def download(link, path, filename, **kwargs):
     with open(path + filename, "wb") as img_file:
-        img_file.write(requests.get(link, **kwargs).content)
+        content = requests.get(link, **kwargs).content
+        if len(content) == 0:
+            raise Exception("Image not found")
+        img_file.write(content)
 
 
 # generic url cleaner
