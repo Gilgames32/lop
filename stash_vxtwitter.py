@@ -50,9 +50,9 @@ def tw_download(twlink: str):
         # fuck you elon
         if glink.startswith("https://pbs.twimg.com/media/"):
             if glink.endswith(".jpg"):
-                glink = glink.replace(".jpg", "?format=jpg&name=large")
+                glink = glink.replace(".jpg", "?format=jpg&name=orig")
             elif glink.endswith(".png"):
-                glink = glink.replace(".png", "?format=png&name=large")
+                glink = glink.replace(".png", "?format=png&name=orig")
         
         download(glink, downloadpath, filename)
 
