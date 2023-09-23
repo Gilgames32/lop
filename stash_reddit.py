@@ -39,6 +39,24 @@ class LopReddit():
             savejson("conf", conf)
 
 
+# fetch info from id
+class RedditPost:
+    def __init__(self, link: str):
+        # pyhtons ternary operator is retarded
+        self.id = link.split("/")[6] if link.startswith("https://") else link
+    
+    async def fetch(self):
+        post = await reddit.api.submission(self.id)
+        
+        self.medialink = post.url
+        if post.is_video:
+            # it doesnt have sound but i dont need it anyway
+            self.medialink = cleanurl(post.media['reddit_video']['fallback_url'])
+        
+        self.ext = self.medialink.split(".")[-1]
+        self.author = post.author.name
+
+
 reddit = LopReddit()
 
 
@@ -48,22 +66,15 @@ async def reddit_download(link: str):
     reddit.reddit_reauth()
     
     # get post
-    postid = link.split("/")[6]
-    post = await reddit.api.submission(postid)
-    
-    # fetch media url
-    medialink = post.url
-    if post.is_video:
-        # it doesnt have sound but i dont need it anyway
-        medialink = cleanurl(post.media['reddit_video']['fallback_url'])
-    ext = medialink.split(".")[-1]
+    post = RedditPost(link)
+    await post.fetch()
     
     # download in artist_postid.ext format
-    filename = f"{post.author.name}_{postid}.{ext}"
-    download(medialink, downloadpath, filename)
+    filename = f"{post.author}_{post.id}.{post.ext}"
+    download(post.medialink, downloadpath, filename)
 
     # generate embed
-    return anyembed(link, medialink, filename)
+    return anyembed(link, post.medialink, filename)
 
 
 # reddit markdown for webhook
@@ -72,17 +83,10 @@ async def reddit_markdown(link:str, webhook: DiscordWebhook):
     reddit.reddit_reauth()
 
     # get post
-    postid = link.split("/")[6]
-    post = await reddit.api.submission(postid)
-    
-    # fetch media url
-    medialink = post.url
-    if post.is_video:
-        # it doesnt have sound but i dont need it anyway
-        medialink = cleanurl(post.media['reddit_video']['fallback_url'])
-    ext = medialink.split(".")[-1]
+    post = RedditPost(link)
+    await post.fetch()
     
     # modify content
-    webhook.content = f'[u/{post.author.name} on reddit](<{link}>)' \
-                    + f' [{"-" if ext == "png" else "~"}]({medialink})'
+    webhook.content = f'[u/{post.author} on reddit](<{link}>)' \
+                    + f' [{"-" if post.ext == "png" else "~"}]({post.medialink})'
     

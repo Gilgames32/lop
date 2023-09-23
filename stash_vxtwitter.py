@@ -35,7 +35,7 @@ def vx_jsonget(twlink: str):
 
 
 # dowload from twitter
-def tw_download(twlink: str):
+async def tw_download(twlink: str):
     # get json from vxtwitter
     vxjson = vx_jsonget(twlink)
 
@@ -61,7 +61,7 @@ def tw_download(twlink: str):
 
 
 # twitter markdown for webhook
-def tw_markdown(link:str, webhook: DiscordWebhook):
+async def tw_markdown(link:str, webhook: DiscordWebhook):
     # get json from vxtwitter
     vxjson = vx_jsonget(link)
     

@@ -18,7 +18,7 @@ class PixivPost:
 
 
 # downloads a pixiv link
-def pixiv_download(link: str):
+async def pixiv_download(link: str):
     # get post
     pixpost = PixivPost(int(link.split("/")[-1]))
 
@@ -30,7 +30,7 @@ def pixiv_download(link: str):
 
 
 # pixiv markdown for webhook
-def pixiv_markdown(link:str, webhook: DiscordWebhook):
+async def pixiv_markdown(link:str, webhook: DiscordWebhook):
     # get post
     pixpost = PixivPost(int(link.split("/")[-1]))
     

@@ -31,7 +31,7 @@ def esix_getpost(elink: str):
 
 
 # downloads an e6 or e9 link
-def esix_download(link: str):
+async def esix_download(link: str):
     # get post
     epost = esix_getpost(link)
     
@@ -44,7 +44,7 @@ def esix_download(link: str):
 
 
 # esix markdown for webhook
-def esix_markdown(link:str, webhook: DiscordWebhook):
+async def esix_markdown(link:str, webhook: DiscordWebhook):
     # get post
     epost = esix_getpost(link)
     
