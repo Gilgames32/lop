@@ -259,7 +259,7 @@ async def on_message(message: discord.Message):
 
     # auto download from #to-stash
     if message.channel.id == stash_chid:
-        embed = anydownload(message.content)
+        embed = await anydownload(message.content)
         if embed is not None:
             await message.delete()
             await message.channel.send(embed=embed, delete_after=(30*60))
@@ -275,7 +275,7 @@ async def on_message(message: discord.Message):
             username=message.author.display_name,
         )
 
-        if anymkwebhook(firstlink, webhook):
+        if await anymkwebhook(firstlink, webhook):
             webhook.execute()
             await message.delete()
 

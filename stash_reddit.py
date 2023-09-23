@@ -1,6 +1,6 @@
 import requests
 import os
-import praw
+import asyncpraw
 import time
 
 from discord_webhook import DiscordWebhook
@@ -28,12 +28,12 @@ class LopReddit():
         access_token = response.json()['access_token']
 
         # use the access token to authenticate the client
-        return praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=app_name, access_token=access_token)
+        return asyncpraw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=app_name, access_token=access_token)
 
     # check if we need to request a new token (has to be done after restart and every hour)
     def reddit_reauth(self):
         conf = loadjson("conf")
-        if conf["reddit_token_birth"] + 360 < time.time():
+        if conf["reddit_token_birth"] + 360 < time.time() or self.api is None:
             self.api = self.reddit_auth()
             conf["reddit_token_birth"] = time.time()
             savejson("conf", conf)
@@ -43,13 +43,13 @@ reddit = LopReddit()
 
 
 # downloads a reddit link
-def reddit_download(link: str):
+async def reddit_download(link: str):
     # refresh token
-    # reddit.reddit_reauth()
+    reddit.reddit_reauth()
     
     # get post
     postid = link.split("/")[6]
-    post = reddit.api.submission(postid)
+    post = await reddit.api.submission(postid)
     
     # fetch media url
     medialink = post.url
@@ -67,13 +67,13 @@ def reddit_download(link: str):
 
 
 # reddit markdown for webhook
-def reddit_markdown(link:str, webhook: DiscordWebhook):
+async def reddit_markdown(link:str, webhook: DiscordWebhook):
     # refresh token
     reddit.reddit_reauth()
 
     # get post
     postid = link.split("/")[6]
-    post = reddit.api.submission(postid)
+    post = await reddit.api.submission(postid)
     
     # fetch media url
     medialink = post.url

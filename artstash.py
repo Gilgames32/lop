@@ -40,22 +40,22 @@ hosts = {
     }
 }
 
-def anydownload(link: str):
+async def anydownload(link: str):
     # strip url
     link = cleanurl(link)
 
     for host in hosts:
         if link.startswith(f"https://{host}/"):
-            return hosts[host]["download"](link)
+            return await hosts[host]["download"](link)
         
 
-def anymkwebhook(link: str, webhook: DiscordWebhook):
+async def anymkwebhook(link: str, webhook: DiscordWebhook):
     # strip url
     link = cleanurl(link)
 
     for host in hosts:
         if link.startswith(f"https://{host}/"):
-            hosts[host]["markdown"](link, webhook)
+            await hosts[host]["markdown"](link, webhook)
             return True
     else:
         return False
