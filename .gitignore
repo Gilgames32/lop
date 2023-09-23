@@ -1,4 +1,5 @@
 downloadpath.txt
+conf.json
 __pycache__/
 .venv/
 .env

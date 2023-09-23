@@ -14,6 +14,13 @@ from artstash import anydownload, anymkwebhook
 
 # init
 load_dotenv()
+if not os.path.exists("./conf.json"):
+    conf = {
+        "debug": False,
+        "reddit_token_birth": 0
+    }
+    savejson("conf", conf)
+
 LOPDEBUG = loadjson("conf")["debug"]
 
 # keys
@@ -269,8 +276,8 @@ async def on_message(message: discord.Message):
         )
 
         if anymkwebhook(firstlink, webhook):
-            await message.delete()
             webhook.execute()
+            await message.delete()
 
 
 client.run(os.getenv("LOPTOKEN"))
