@@ -209,7 +209,7 @@ async def saucefind(interaction: discord.Interaction, message: discord.Message):
 async def ctxdown(interaction: discord.Interaction, message: discord.Message):
     if not await devcheck(interaction):
         return
-    embed = anydownload(message.content)
+    embed = await anydownload(message.content)
     if embed is None:
         embed = errorembed(
             "The message must start with a valid link\n"
