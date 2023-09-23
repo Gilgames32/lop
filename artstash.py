@@ -3,6 +3,7 @@ from urlparser import cleanurl
 from stash_esix import esix_download, esix_markdown
 from stash_vxtwitter import tw_download, tw_markdown
 from stash_pixiv import pixiv_download, pixiv_markdown
+from stash_reddit import reddit_download, reddit_markdown
 
 hosts = {
     "e621.net": {
@@ -32,7 +33,11 @@ hosts = {
     "x.com": {
         "download": tw_download,
         "markdown": tw_markdown
-    }    
+    },
+    "www.reddit.com": {
+        "download": reddit_download,
+        "markdown": reddit_markdown
+    }
 }
 
 def anydownload(link: str):

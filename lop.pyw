@@ -1,5 +1,3 @@
-LOPDEBUG = False
-
 import os
 import sys
 os.chdir(sys.path[0])
@@ -11,11 +9,12 @@ import feedparser
 from pysaucenao import SauceNao
 from discord_webhook import DiscordWebhook
 
-from urlparser import downloadpath
+from urlparser import downloadpath, loadjson, savejson
 from artstash import anydownload, anymkwebhook
 
 # init
 load_dotenv()
+LOPDEBUG = loadjson("conf")["debug"]
 
 # keys
 labowor = discord.Object(id=834100481839726693)
@@ -48,6 +47,8 @@ async def setup_hook():
 # manual sync
 @tree.command(name="sync", description="Sync the command tree", guild=labowor)
 async def sync_cmd(interaction: discord.Interaction):
+    if not await devcheck(interaction):
+            return
     await tree.sync(guild=labowor)
     await interaction.response.send_message("Command tree synced", ephemeral=True)
 
@@ -205,7 +206,7 @@ async def ctxdown(interaction: discord.Interaction, message: discord.Message):
     if embed is None:
         embed = errorembed(
             "The message must start with a valid link\n"
-            "Currently supported sites: twitter, e621, e926, pixiv"
+            "Currently supported sites: twitter, e621, e926, pixiv, reddit"
         )
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -231,6 +232,15 @@ async def download_history(interaction: discord.Interaction, count: int):
     embed = discord.Embed(title=f"Downloaded {dlcount} posts", color=0x009AFE)
     embed.set_footer(text=downloadpath)
     await interaction.edit_original_response(embed=embed)
+
+
+# purge her own messages
+@tree.command(name="purr", description="Purge her own messages", guild=labowor)
+async def purge_self(interaction: discord.Interaction, limit: int):
+    if not await devcheck(interaction):
+            return
+    await interaction.channel.purge(limit=limit, check=lambda message: message.author.id == client.user.id)
+    await interaction.response.send_message(f"Purrged {limit} messages", ephemeral=True)
 
 
 # on message

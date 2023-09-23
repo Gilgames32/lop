@@ -1,10 +1,23 @@
 import requests
 import os
+import json
 from discord import Embed
 
 downloadpath = "C:/GIL/Down/"
 with open("./downloadpath.txt", "r") as f:
     downloadpath = f.read()
+
+
+# save jsons
+def savejson(jsonname: str, jdata):
+    with open(f"{jsonname}.json", "w+") as outpoot:
+        json.dump(jdata, outpoot, sort_keys=True, indent=4)
+
+
+# load jsons
+def loadjson(jsonname: str):
+    with open(f"{jsonname}.json", "r") as inpoot:
+        return json.load(inpoot)
 
 
 # downloads an image by link, saves to path as filename
