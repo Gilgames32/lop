@@ -1,71 +1,69 @@
+# set working directory
 import os
 import sys
 os.chdir(sys.path[0])
 
 import discord
+from discord.ext import commands
 from discord import Activity, Status, app_commands
 from dotenv import load_dotenv
 import feedparser
 from pysaucenao import SauceNao
 from discord_webhook import DiscordWebhook
 
-from urlparser import downloadpath, loadjson, savejson
+from urlparser import downloadpath
 from artstash import anydownload, anymkwebhook
+from jsonmng import loadjson, savejson
+
 
 # init
 load_dotenv()
-if not os.path.exists("./conf.json"):
-    conf = {
-        "debug": False,
-        "reddit_token_birth": 0
-    }
-    savejson("conf", conf)
+# debug
+conf = loadjson("conf")
+LOPDEBUG = conf["debug"]
 
-LOPDEBUG = loadjson("conf")["debug"]
-
-# keys
-labowor = discord.Object(id=834100481839726693)
+# ids
+dev = conf["dev"]
+labowor = discord.Object(id=conf["labowor"])
+tostash_chid = conf["tostash"]
+tomarkdown_chid = conf["tomarkdown"]
+# tokens
 webhookurl = os.getenv("WEBHOOK32")
-dev = 954419840251199579
 sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
-stash_chid = 1113025678632300605
-twmrkdown_chid = 969498055151865907
-
+# debug channel overwrites
+if LOPDEBUG:
+    # instead of #floof it will listen to #test
+    webhookurl = os.getenv("WEBHOOK_DEBUG")
+    tomarkdown_chid = conf["tomarkdown_debug"]
 
 # discord init
 intents = discord.Intents.default()
 intents.message_content = True
-client = discord.Client(intents=intents)
-tree = app_commands.CommandTree(client)
-
-if LOPDEBUG:
-    # instead of #floof it will listen to #test
-    webhookurl = os.getenv("WEBHOOK_DEBUG")
-    twmrkdown_chid = 1012384595611746465
+bot = commands.Bot(command_prefix=".", description="A bot by Gil", intents=intents)
 
 
 # sync command tree, currently disabled, syncing is manual
-@client.event
+@bot.event
 async def setup_hook():
     # await tree.sync(guild=labowor)
     print("Command tree syncing is recommended")
 
 
 # manual sync
-@tree.command(name="sync", description="Sync the command tree", guild=labowor)
+@bot.tree.command(name="sync", description="Sync the command tree", guild=labowor)
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
             return
-    await tree.sync(guild=labowor)
+    await bot.tree.sync(guild=labowor)
     await interaction.response.send_message("Command tree synced", ephemeral=True)
 
 
 # on ready
-@client.event
+@bot.event
 async def on_ready():
-    print(f"Logged in as {client.user}")
+    print(f"Logged in as {bot.user}")
     if LOPDEBUG:
-        await client.change_presence(
+        await bot.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.playing,
                 name="Debugging"
@@ -131,7 +129,7 @@ class Panik(discord.ui.View):
 
 
 # force shutdown
-@tree.command(name="panik", description="Shut down the app", guild=labowor)
+@bot.tree.command(name="panik", description="Shut down the app", guild=labowor)
 async def panic(interaction: discord.Interaction):
     if not await devcheck(interaction):
         return
@@ -139,12 +137,12 @@ async def panic(interaction: discord.Interaction):
 
 
 # debug ping, also sets the status, snowflake
-@tree.command(name="debug", description="Debug ping", guild=labowor)
+@bot.tree.command(name="debug", description="Debug ping", guild=labowor)
 async def test(interaction: discord.Interaction):
     await interaction.response.send_message(":3")
     if LOPDEBUG:
         return
-    await client.change_presence(
+    await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching, name="Gil's nightmares"
         )
@@ -152,7 +150,7 @@ async def test(interaction: discord.Interaction):
 
 
 # rss feedparse for twokinds
-@tree.command(name="twokinds", description="Sends latest TwoKinds page", guild=labowor)
+@bot.tree.command(name="twokinds", description="Sends latest TwoKinds page", guild=labowor)
 async def twokinds(interaction: discord.Interaction):
     tkfeed = feedparser.parse("https://twokinds.keenspot.com/feed.xml")
     newpagelink = tkfeed.entries[0]["links"][0]["href"]
@@ -160,7 +158,7 @@ async def twokinds(interaction: discord.Interaction):
 
 
 # reverse image search with saucenao
-@tree.context_menu(name="SauceNAO", guild=labowor)
+@bot.tree.context_menu(name="SauceNAO", guild=labowor)
 async def saucefind(interaction: discord.Interaction, message: discord.Message):
     if not await devcheck(interaction):
         return
@@ -205,7 +203,7 @@ async def saucefind(interaction: discord.Interaction, message: discord.Message):
 
 
 # fancy downloader, sets filenames to artist names so that i dont have to
-@tree.context_menu(name="Down", guild=labowor)
+@bot.tree.context_menu(name="Down", guild=labowor)
 async def ctxdown(interaction: discord.Interaction, message: discord.Message):
     if not await devcheck(interaction):
         return
@@ -219,7 +217,7 @@ async def ctxdown(interaction: discord.Interaction, message: discord.Message):
 
 
 # bulk download downloadables from channel history
-@tree.command(name="stash", description="Bulk download old messages", guild=labowor)
+@bot.tree.command(name="stash", description="Bulk download old messages", guild=labowor)
 @app_commands.describe(count="amount of messages processed")
 async def download_history(interaction: discord.Interaction, count: int):
     if not await devcheck(interaction):
@@ -242,30 +240,30 @@ async def download_history(interaction: discord.Interaction, count: int):
 
 
 # purge her own messages
-@tree.command(name="purr", description="Purge her own messages", guild=labowor)
+@bot.tree.command(name="purr", description="Purge her own messages", guild=labowor)
 async def purge_self(interaction: discord.Interaction, limit: int):
     if not await devcheck(interaction):
             return
-    await interaction.channel.purge(limit=limit, check=lambda message: message.author.id == client.user.id)
-    await interaction.response.send_message(f"Purrged {limit} messages", ephemeral=True)
+    deleted = await interaction.channel.purge(limit=limit, check=lambda message: message.author.id == bot.user.id)
+    await interaction.response.send_message(f"Purrged {deleted} messages", ephemeral=True)
 
 
 # on message
-@client.event
+@bot.event
 async def on_message(message: discord.Message):
     # ignore bots
     if message.author.bot:
         return
 
     # auto download from #to-stash
-    if message.channel.id == stash_chid:
+    if message.channel.id == tostash_chid:
         embed = await anydownload(message.content)
         if embed is not None:
             await message.delete()
             await message.channel.send(embed=embed, delete_after=(30*60))
 
     # turn twitter and e6 links to better markdowns using webhooks
-    elif message.channel.id == twmrkdown_chid:
+    elif message.channel.id == tomarkdown_chid:
         firstlink = message.content.split(" ")[0]
 
         webhook = DiscordWebhook(
@@ -280,4 +278,4 @@ async def on_message(message: discord.Message):
             await message.delete()
 
 
-client.run(os.getenv("LOPTOKEN"))
+bot.run(os.getenv("LOPTOKEN"))

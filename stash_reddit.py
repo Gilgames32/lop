@@ -6,7 +6,8 @@ import time
 from discord_webhook import DiscordWebhook
 from dotenv import load_dotenv
 
-from urlparser import anyembed, download, downloadpath, cleanurl, loadjson, savejson
+from urlparser import anyembed, download, downloadpath, cleanurl
+from jsonmng import loadjson, savejson
 
 
 # init
