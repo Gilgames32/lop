@@ -2,7 +2,6 @@ import os
 import json
 import discord
 from dotenv import load_dotenv
-from pysaucenao import SauceNao
 
 
 # save jsons
@@ -45,7 +44,6 @@ tostash_chid = conf["tostash"]
 tomarkdown_chid = conf["tomarkdown"]
 # tokens
 webhookurl = os.getenv("WEBHOOK32")
-sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
 # debug channel overwrites
 if LOPDEBUG:
     # instead of #floof it will listen to #test

@@ -112,53 +112,6 @@ async def test(interaction: discord.Interaction):
     )
 
 
-# reverse image search with saucenao
-@bot.tree.context_menu(name="SauceNAO", guild=labowor)
-async def saucefind(interaction: discord.Interaction, message: discord.Message):
-    if not await devcheck(interaction):
-        return
-
-    piclinks = getattachmenturls(message)
-
-    if len(piclinks) > 0:
-        try:
-            results = await sauceapi.from_url(piclinks[0])
-        except any:
-            await errorrespond(interaction, "Something went wrong")
-            return
-
-        if len(results) != 0:
-            embed = discord.Embed(
-                title="Sauce found",
-                url=f"https://saucenao.com/search.php?db=999&url={piclinks[0]}",
-                color=0x5865F2,
-            )
-            embed.set_thumbnail(url=results[0].thumbnail)
-            for r in results:
-                if r.index is not None and r.url is not None:
-                    embed.add_field(
-                        name=f"{r.index} | {r.similarity}%"
-                        + (f" | {r.author_name}" if r.author_name is not None else ""),
-                        value=f"{r.url}",
-                        inline=False,
-                    )
-
-            embed.set_footer(
-                text=f"limit {results.short_remaining}s {results.long_remaining}d"
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        else:
-            await errorrespond(interaction, "Sauce not found")
-
-    else:
-        await errorrespond(
-            interaction, "The message must contain one and only one attachment"
-        )
-
-
-
-
 # purge her own messages
 @bot.tree.command(name="purr", description="Purge her own messages", guild=labowor)
 async def purge_self(interaction: discord.Interaction, limit: int):
