@@ -112,14 +112,6 @@ async def test(interaction: discord.Interaction):
     )
 
 
-# rss feedparse for twokinds
-@bot.tree.command(name="twokinds", description="Sends latest TwoKinds page", guild=labowor)
-async def twokinds(interaction: discord.Interaction):
-    tkfeed = feedparser.parse("https://twokinds.keenspot.com/feed.xml")
-    newpagelink = tkfeed.entries[0]["links"][0]["href"]
-    await interaction.response.send_message(newpagelink)
-
-
 # reverse image search with saucenao
 @bot.tree.context_menu(name="SauceNAO", guild=labowor)
 async def saucefind(interaction: discord.Interaction, message: discord.Message):

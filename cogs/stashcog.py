@@ -16,7 +16,7 @@ class StashCog(commands.Cog):
             callback=self.ctxdown,
         )
         self.bot.tree.add_command(self.ctx_menu, guild=labowor)
-        print("StashCog loaded")
+        print("Loaded", __class__.__name__)
         
 
     async def ctxdown(self, interaction: discord.Interaction, message: discord.Message):
