@@ -1,7 +1,7 @@
 import requests
 from discord_webhook import DiscordWebhook
 
-from urlparser import anyembed, download, downloadpath
+from util.urlparser import anyembed, download, downloadpath
 
 # base header so that we dont get 403
 pixiv_baseheader = lambda x : {"referer": f"https://www.pixiv.net/member_illust.php?mode=medium&illust_id={x}"}

@@ -1,8 +1,8 @@
 import requests
 from discord_webhook import DiscordWebhook
-from urlparser import anyembed
+from util.urlparser import anyembed
 
-from urlparser import download, downloadpath, cleanurl
+from util.urlparser import download, downloadpath, cleanurl
 
 # temporary fix because fuck you elon
 # returns a json with the info of the given tweet

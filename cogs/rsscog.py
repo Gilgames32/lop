@@ -4,7 +4,7 @@ from discord.ext import commands
 
 import feedparser
 
-from const import labowor
+from util.const import labowor
 
 
 class RSSCog(commands.Cog):

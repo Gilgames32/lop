@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from const import labowor, LOPDEBUG
+from util.const import labowor, LOPDEBUG
 
 class StatusCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -10,7 +10,7 @@ class StatusCog(commands.Cog):
         print("Loaded", __class__.__name__)
         
     # debug ping, also sets the status, snowflake
-    @app_commands.command(name="debug", description="Debug ping", guild=labowor)
+    @app_commands.command(name="debug", description="Debug ping")
     async def test(self, interaction: discord.Interaction):
         await interaction.response.send_message(":3")
         if LOPDEBUG:

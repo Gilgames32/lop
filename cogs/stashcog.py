@@ -3,10 +3,10 @@ from discord import app_commands
 from discord.ext import commands
 from discord_webhook import DiscordWebhook
 
-from const import *
-from msgutil import *
-from artstash import anydownload, anymkwebhook
-from urlparser import downloadpath
+from util.const import *
+from util.msgutil import *
+from util.artstash import anydownload, anymkwebhook
+from util.urlparser import downloadpath
 
 class StashCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:

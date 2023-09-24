@@ -1,9 +1,9 @@
 from discord_webhook import DiscordWebhook
-from urlparser import cleanurl
-from stash_esix import esix_download, esix_markdown
-from stash_vxtwitter import tw_download, tw_markdown
-from stash_pixiv import pixiv_download, pixiv_markdown
-from stash_reddit import reddit_download, reddit_markdown
+from util.urlparser import cleanurl
+from stash.stash_esix import esix_download, esix_markdown
+from stash.stash_vxtwitter import tw_download, tw_markdown
+from stash.stash_pixiv import pixiv_download, pixiv_markdown
+from stash.stash_reddit import reddit_download, reddit_markdown
 
 hosts = {
     "e621.net": {

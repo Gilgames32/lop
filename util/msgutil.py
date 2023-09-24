@@ -1,5 +1,5 @@
 import discord
-from const import dev
+from util.const import dev
 
 # return uniform embed for errors
 def errorembed(error: str):

@@ -3,8 +3,8 @@ import os
 import sys
 os.chdir(sys.path[0])
 
-from const import *
-from msgutil import *
+from util.const import *
+from util.msgutil import *
 
 import asyncio
 import discord

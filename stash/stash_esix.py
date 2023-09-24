@@ -3,7 +3,7 @@ import e621
 import os
 from dotenv import load_dotenv
 
-from urlparser import anyembed, downloadpath, download
+from util.urlparser import anyembed, downloadpath, download
 
 
 # init

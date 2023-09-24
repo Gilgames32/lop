@@ -5,8 +5,8 @@ from discord.ext import commands
 import os
 from pysaucenao import SauceNao
 
-from const import labowor
-from msgutil import *
+from util.const import labowor
+from util.msgutil import *
 
 class SauceCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:

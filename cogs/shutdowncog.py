@@ -2,8 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from const import labowor
-from msgutil import devcheck
+from util.const import labowor
+from util.msgutil import devcheck
 
 
 
@@ -36,7 +36,7 @@ class ShutdownCog(commands.Cog):
         print("Loaded", __class__.__name__)
         
     # force shutdown
-    @app_commands.command(name="panik", description="Shut down the app", guild=labowor)
+    @app_commands.command(name="panik", description="Shut down the app")
     async def panic(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
