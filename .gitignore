@@ -1,5 +1,6 @@
 downloadpath.txt
 conf.json
+gif-collections.json
 __pycache__/
 .venv/
 .env

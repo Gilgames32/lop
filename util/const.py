@@ -11,7 +11,7 @@ def savejson(jsonname: str, jdata):
 
 
 # load jsons
-def loadjson(jsonname: str):
+def loadjson(jsonname: str) -> dict:
     with open(f"{jsonname}.json", "r") as inpoot:
         return json.load(inpoot)
     
