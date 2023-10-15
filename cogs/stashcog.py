@@ -86,7 +86,10 @@ class StashCog(commands.Cog):
                 await message.channel.send(embed=embed, delete_after=(30*60))
 
         # turn twitter and e6 links to better markdowns using webhooks
-        elif message.channel.id == tomarkdown_chid:
+        # now with thread support
+        elif message.channel.id == tomarkdown_chid or \
+             message.channel.type == discord.ChannelType.public_thread and message.channel.parent_id == tomarkdown_chid:
+            
             firstlink = message.content.split(" ")[0]
 
             webhook = DiscordWebhook(
@@ -95,6 +98,9 @@ class StashCog(commands.Cog):
                 avatar_url=message.author.avatar.url,
                 username=message.author.display_name,
             )
+
+            if message.channel.type == discord.ChannelType.public_thread:
+                webhook.thread_id = message.channel.id
 
             if await anymkwebhook(firstlink, webhook):
                 webhook.execute()
