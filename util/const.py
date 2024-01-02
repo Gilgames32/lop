@@ -14,7 +14,7 @@ def savejson(jsonname: str, jdata):
 def loadjson(jsonname: str) -> dict:
     with open(f"{jsonname}.json", "r") as inpoot:
         return json.load(inpoot)
-    
+
 
 # create conf if it doesnt exist
 if not os.path.exists("./conf.json"):
@@ -25,7 +25,7 @@ if not os.path.exists("./conf.json"):
         "labowor": 834100481839726693,
         "tostash": 1113025678632300605,
         "tomarkdown": 969498055151865907,
-        "tomarkdown_debug": 1012384595611746465
+        "tomarkdown_debug": 1012384595611746465,
     }
     savejson("conf", conf)
     print("conf.json was created")

@@ -1,6 +1,7 @@
 import discord
 from util.const import dev
 
+
 # return uniform embed for errors
 def errorembed(error: str):
     embed = discord.Embed(color=0xFF6700)

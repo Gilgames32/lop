@@ -4,11 +4,12 @@ from discord.ext import commands
 
 from util.const import labowor, LOPDEBUG
 
+
 class StatusCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         print("Loaded", __class__.__name__)
-        
+
     # debug ping, also sets the status, snowflake
     @app_commands.command(name="debug", description="Debug ping")
     async def test(self, interaction: discord.Interaction):

@@ -4,6 +4,7 @@ from util.urlparser import anyembed
 
 from util.urlparser import download, downloadpath, cleanurl
 
+
 # temporary fix because fuck you elon
 # returns a json with the info of the given tweet
 def vx_jsonget(twlink: str):
@@ -23,13 +24,13 @@ def vx_jsonget(twlink: str):
         if twlink.startswith(f"https://{h}/"):
             twlink = twlink.replace(h, "api.vxtwitter.com")
             break
-    
+
     # getting json
     vxjson = requests.get(twlink).json()
-    
+
     # if the photo id was specified, disregard the rest
     if photo != 0:
-        vxjson["mediaURLs"] = [ vxjson["mediaURLs"][photo-1] ]
+        vxjson["mediaURLs"] = [vxjson["mediaURLs"][photo - 1]]
 
     return vxjson
 
@@ -44,7 +45,7 @@ async def tw_download(twlink: str):
     for i, glink in enumerate(gallery):
         # download in artist_postid_gidx.ext format
         filename = f'{vxjson["user_screen_name"]}_{vxjson["tweetID"]}{"_"+str(i) if len(gallery) > 1 else ""}.{glink.split(".")[-1].split("?")[0]}'
-        
+
         # temporary fix because rn it only loads thumbnails
         # only for images idc about video
         # fuck you elon
@@ -53,7 +54,7 @@ async def tw_download(twlink: str):
                 glink = glink.replace(".jpg", "?format=jpg&name=orig")
             elif glink.endswith(".png"):
                 glink = glink.replace(".png", "?format=png&name=orig")
-        
+
         download(glink, downloadpath, filename)
 
     # generate embed
@@ -61,19 +62,19 @@ async def tw_download(twlink: str):
 
 
 # twitter markdown for webhook
-async def tw_markdown(link:str, webhook: DiscordWebhook):
+async def tw_markdown(link: str, webhook: DiscordWebhook):
     # get json from vxtwitter
     vxjson = vx_jsonget(link)
-    
+
     # get gallery
     gallery = vxjson["mediaURLs"]
-    
+
     # setup content
     content = f'[@{vxjson["user_screen_name"]} on Twitter](<{vxjson["tweetURL"]}>)'
 
     # add multiple posts if needed
     for glink in gallery:
         content += f' [{"-" if glink.split(".")[-1] == "png" else "~"}]({glink})'
-    
+
     # modify content
     webhook.content = content

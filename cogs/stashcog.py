@@ -8,16 +8,16 @@ from util.msgutil import *
 from util.artstash import anydownload, anymkwebhook
 from util.urlparser import downloadpath
 
+
 class StashCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.ctx_menu = app_commands.ContextMenu(
-            name='NewDown',
+            name="NewDown",
             callback=self.ctxdown,
         )
         self.bot.tree.add_command(self.ctx_menu, guild=labowor)
         print("Loaded", __class__.__name__)
-        
 
     async def ctxdown(self, interaction: discord.Interaction, message: discord.Message):
         if not await devcheck(interaction):
@@ -29,7 +29,6 @@ class StashCog(commands.Cog):
                 "Currently supported sites: twitter, e621, e926, pixiv, reddit"
             )
         await interaction.response.send_message(embed=embed, ephemeral=True)
-
 
     # bulk download downloadables from channel history
     @app_commands.command(name="stash", description="Bulk download old messages")
@@ -53,10 +52,11 @@ class StashCog(commands.Cog):
         embed.set_footer(text=downloadpath)
         await interaction.edit_original_response(embed=embed)
 
-
     # save any file to stash
     @app_commands.command(name="save", description="Save any file to stash")
-    async def download_history(self, interaction: discord.Interaction, file: discord.Attachment, filename: str):
+    async def download_history(
+        self, interaction: discord.Interaction, file: discord.Attachment, filename: str
+    ):
         if not await devcheck(interaction):
             return
 
@@ -66,11 +66,13 @@ class StashCog(commands.Cog):
         await file.save(downloadpath + filename)
 
         embed = discord.Embed(title=f"File saved", color=0x009AFE)
-        embed.add_field(name=filename, value=f"{round(os.path.getsize(downloadpath + filename)/1024, 1)} KB")
+        embed.add_field(
+            name=filename,
+            value=f"{round(os.path.getsize(downloadpath + filename)/1024, 1)} KB",
+        )
         embed.set_image(url=file.url)
         embed.set_footer(text=downloadpath)
-        await interaction.response.send_message(embed=embed, delete_after=(30*60))
-
+        await interaction.response.send_message(embed=embed, delete_after=(30 * 60))
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -83,13 +85,15 @@ class StashCog(commands.Cog):
             embed = await anydownload(message.content)
             if embed is not None:
                 await message.delete()
-                await message.channel.send(embed=embed, delete_after=(30*60))
+                await message.channel.send(embed=embed, delete_after=(30 * 60))
 
         # turn twitter and e6 links to better markdowns using webhooks
         # now with thread support
-        elif message.channel.id == tomarkdown_chid or \
-             message.channel.type == discord.ChannelType.public_thread and message.channel.parent_id == tomarkdown_chid:
-            
+        elif (
+            message.channel.id == tomarkdown_chid
+            or message.channel.type == discord.ChannelType.public_thread
+            and message.channel.parent_id == tomarkdown_chid
+        ):
             firstlink = message.content.split(" ")[0]
 
             webhook = DiscordWebhook(
@@ -105,7 +109,6 @@ class StashCog(commands.Cog):
             if await anymkwebhook(firstlink, webhook):
                 webhook.execute()
                 await message.delete()
-
 
 
 async def setup(bot: commands.Bot) -> None:

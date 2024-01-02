@@ -6,7 +6,6 @@ from util.const import labowor
 from util.msgutil import devcheck
 
 
-
 # view for panik shutdown
 class Panik(discord.ui.View):
     @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
@@ -29,19 +28,17 @@ class Panik(discord.ui.View):
         await interaction.message.delete()
 
 
-
 class ShutdownCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         print("Loaded", __class__.__name__)
-        
+
     # force shutdown
     @app_commands.command(name="panik", description="Shut down the app")
     async def panic(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
         await interaction.response.send_message(view=Panik(), ephemeral=False)
-
 
 
 async def setup(bot: commands.Bot) -> None:

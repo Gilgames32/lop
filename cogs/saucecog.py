@@ -8,20 +8,22 @@ from pysaucenao import SauceNao
 from util.const import labowor
 from util.msgutil import *
 
+
 class SauceCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.sauceapi = SauceNao(api_key=os.getenv("SAUCETOKEN"))
         self.bot = bot
         self.ctx_menu = app_commands.ContextMenu(
-            name='SauceNAO',
+            name="SauceNAO",
             callback=self.saucefind,
         )
         self.bot.tree.add_command(self.ctx_menu, guild=labowor)
         print("Loaded", __class__.__name__)
-        
 
     # reverse image search with saucenao
-    async def saucefind(self, interaction: discord.Interaction, message: discord.Message):
+    async def saucefind(
+        self, interaction: discord.Interaction, message: discord.Message
+    ):
         if not await devcheck(interaction):
             return
 
@@ -45,7 +47,11 @@ class SauceCog(commands.Cog):
                     if r.index is not None and r.url is not None:
                         embed.add_field(
                             name=f"{r.index} | {r.similarity}%"
-                            + (f" | {r.author_name}" if r.author_name is not None else ""),
+                            + (
+                                f" | {r.author_name}"
+                                if r.author_name is not None
+                                else ""
+                            ),
                             value=f"{r.url}",
                             inline=False,
                         )
@@ -62,7 +68,6 @@ class SauceCog(commands.Cog):
             await errorrespond(
                 interaction, "The message must contain one and only one attachment"
             )
-
 
 
 async def setup(bot: commands.Bot) -> None:

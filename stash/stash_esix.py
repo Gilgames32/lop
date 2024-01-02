@@ -15,10 +15,10 @@ esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
 def esix_getpost(elink: str):
     # get id
     eid = int(elink.split("/")[4])
-    
+
     # fetch post
     epost = esix.posts.get(eid)
-    
+
     # remove conditional dnp from artists
     if "conditional_dnp" in epost.tags.artist:
         epost.tags.artist.remove("conditional_dnp")
@@ -26,7 +26,7 @@ def esix_getpost(elink: str):
     # if it really has no artist
     if epost.tags.artist == []:
         epost.tags.artist.append("unknown")
-    
+
     return epost
 
 
@@ -34,7 +34,7 @@ def esix_getpost(elink: str):
 async def esix_download(link: str):
     # get post
     epost = esix_getpost(link)
-    
+
     # download in artist_postid.ext format
     filename = f"{epost.tags.artist[0]}_{epost.id}.{epost.file.ext}"
     download(epost.file.url, downloadpath, filename)
@@ -44,14 +44,16 @@ async def esix_download(link: str):
 
 
 # esix markdown for webhook
-async def esix_markdown(link:str, webhook: DiscordWebhook):
+async def esix_markdown(link: str, webhook: DiscordWebhook):
     # get post
     epost = esix_getpost(link)
-    
+
     # switch to e9 if the rating is safe
     if epost.rating == "s":
         link = link.replace("e621", "e926")
-    
+
     # modify content
-    webhook.content = f'[{epost.tags.artist[0]} on {"E926" if epost.rating == "s" else "E621"}](<{link}>)' \
-                    + f' [{"-" if epost.file.ext == "png" else "~"}]({epost.file.url})'
+    webhook.content = (
+        f'[{epost.tags.artist[0]} on {"E926" if epost.rating == "s" else "E621"}](<{link}>)'
+        + f' [{"-" if epost.file.ext == "png" else "~"}]({epost.file.url})'
+    )

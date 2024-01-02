@@ -4,6 +4,7 @@ from discord_webhook import DiscordWebhook
 from util.urlparser import anyembed
 from util.urlparser import download, downloadpath, cleanurl
 
+
 # parse url and prepare download link
 def tw_linkparse(twlink: str):
     # clean trackers
@@ -32,7 +33,7 @@ def tw_gallery(fxlink: str):
             break
         else:
             links.append(responseurl)
-    
+
     return links
 
 
@@ -53,19 +54,19 @@ def tw_download(twlink: str):
 
 
 # twitter markdown for webhook
-def tw_markdown(link:str, webhook: DiscordWebhook):
+def tw_markdown(link: str, webhook: DiscordWebhook):
     # generate d.fxtwitter link
     dfxlink = tw_linkparse(link)
-    
+
     # fetch gallery
     gallery = tw_gallery(dfxlink)
-    
+
     # setup content
     content = f'[{link.split("/")[3]} on Twitter](<{link}>)'
 
     # add multiple posts if needed
     for glink in gallery:
         content += f' [{"-" if glink.split(".")[-1] == "png" else "~"}]({glink})'
-    
+
     # modify content
     webhook.content = content

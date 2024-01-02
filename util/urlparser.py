@@ -25,7 +25,10 @@ def cleanurl(url: str):
 # generic embed for downloads
 def anyembed(url: str, imgurl: str, filename: str):
     embed = Embed(title="Image downloaded", url=url, color=0x009AFE)
-    embed.add_field(name=filename, value=f"{round(os.path.getsize(downloadpath + filename)/1024, 1)} KB")
+    embed.add_field(
+        name=filename,
+        value=f"{round(os.path.getsize(downloadpath + filename)/1024, 1)} KB",
+    )
     embed.set_image(url=imgurl)
     embed.set_footer(text=downloadpath)
     return embed

@@ -1,6 +1,7 @@
 # set working directory
 import os
 import sys
+
 os.chdir(sys.path[0])
 
 from util.const import *
@@ -9,7 +10,6 @@ from util.msgutil import *
 import asyncio
 import discord
 from discord.ext import commands
-
 
 
 # discord init
@@ -39,10 +39,9 @@ async def on_ready():
     if LOPDEBUG:
         await bot.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType.playing,
-                name="Debugging"
-            ), 
-            status=discord.Status.dnd
+                type=discord.ActivityType.playing, name="Debugging"
+            ),
+            status=discord.Status.dnd,
         )
         print("Status set, debug mode enabled")
 
@@ -51,7 +50,7 @@ async def on_ready():
 @bot.tree.command(name="sync", description="Sync the command tree", guild=labowor)
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
-            return
+        return
     await interaction.response.defer()
     await bot.tree.sync(guild=interaction.guild)
     await interaction.followup.send("Command tree synced", ephemeral=True)

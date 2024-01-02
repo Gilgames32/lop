@@ -47,7 +47,7 @@ async def anydownload(link: str):
     for host in hosts:
         if link.startswith(f"https://{host}/"):
             return await hosts[host]["download"](link)
-        
+
 
 async def anymkwebhook(link: str, webhook: DiscordWebhook):
     # strip url
