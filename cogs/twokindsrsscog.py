@@ -7,7 +7,7 @@ import feedparser
 from util.const import labowor
 
 
-class RSSCog(commands.Cog):
+class TKRSSCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         print("Loaded", __class__.__name__)
@@ -21,4 +21,4 @@ class RSSCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(RSSCog(bot), guild=labowor)
+    await bot.add_cog(TKRSSCog(bot), guild=labowor)

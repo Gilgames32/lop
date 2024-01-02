@@ -26,6 +26,8 @@ if not os.path.exists("./conf.json"):
         "tostash": 1113025678632300605,
         "tomarkdown": 969498055151865907,
         "tomarkdown_debug": 1012384595611746465,
+        "last_rss": 0,
+        "twfollows": []
     }
     savejson("conf", conf)
     print("conf.json was created")
