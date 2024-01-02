@@ -52,8 +52,9 @@ async def on_ready():
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
             return
+    await interaction.response.defer()
     await bot.tree.sync(guild=interaction.guild)
-    await interaction.response.send_message("Command tree synced", ephemeral=True)
+    await interaction.followup.send("Command tree synced", ephemeral=True)
 
 
 asyncio.run(main())
