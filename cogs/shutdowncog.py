@@ -10,9 +10,9 @@ from util.msgutil import devcheck
 class Panik(discord.ui.View):
     bot: commands.Bot
 
-    def __init__(self, bot: commands.Bot, *, timeout: float | None = 180):
+    def __init__(self, bot: commands.Bot):
         Panik.bot = bot
-        super().__init__(timeout=timeout)
+        super().__init__()
 
     @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
     async def shutdown(
