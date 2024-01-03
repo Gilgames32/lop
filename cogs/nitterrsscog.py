@@ -6,17 +6,17 @@ from discord_webhook import DiscordWebhook
 import feedparser
 import time
 import requests
-import schedule
-import threading
+import asyncio
 
 from util.const import *
 from util.msgutil import *
 
 
-def scheduler():
+async def nitter_loop():
     while True:
-        schedule.run_pending()
-        time.sleep(360)
+        # 4 hours
+        await asyncio.sleep(4 * 3600)
+        await nitter_parse_followed()
 
 
 def nitter_parse_user(user: str):
@@ -65,7 +65,7 @@ def nitter_parse_user(user: str):
         webhook.execute()
 
 
-def nitter_parse_followed():
+async def nitter_parse_followed():
     # parese users
     for user in conf["twfollows"]:
         nitter_parse_user(user)
@@ -78,12 +78,8 @@ def nitter_parse_followed():
 class NitterFeedCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        asyncio.get_event_loop().create_task(nitter_loop())
         print("Loaded", __class__.__name__)
-
-        schedule.every().day.at("00:00").do(nitter_parse_followed)
-        scheduler_thread = threading.Thread(target=scheduler)
-        scheduler_thread.start()
-        print("Scheduled rss parser job")
 
     # add follows
     @app_commands.command(
@@ -114,16 +110,13 @@ class NitterFeedCog(commands.Cog):
         )
 
     # manual sync
-    @app_commands.command(
-        name="nsync", description="Force sync follows"
-    )
+    @app_commands.command(name="nsync", description="Force sync follows")
     async def nsync(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
         await interaction.response.defer(ephemeral=True)
         nitter_parse_followed()
         await interaction.followup.send("Done")
-        
 
 
 async def setup(bot: commands.Bot) -> None:
