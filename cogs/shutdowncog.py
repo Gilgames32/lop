@@ -8,6 +8,12 @@ from util.msgutil import devcheck
 
 # view for panik shutdown
 class Panik(discord.ui.View):
+    bot: commands.Bot
+
+    def __init__(self, bot: commands.Bot, *, timeout: float | None = 180):
+        Panik.bot = bot
+        super().__init__(timeout=timeout)
+
     @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
     async def shutdown(
         self, interaction: discord.Interaction, button: discord.ui.Button
@@ -17,7 +23,11 @@ class Panik(discord.ui.View):
         button.disabled = True
         await interaction.response.edit_message(view=self)
         await interaction.message.delete()
-        quit()
+
+        await Panik.bot.close()
+        await Panik.bot.http.close()
+        await Panik.bot.session.close()
+        Panik.bot.loop.close()
 
     @discord.ui.button(emoji="✖", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -38,7 +48,7 @@ class ShutdownCog(commands.Cog):
     async def panic(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
-        await interaction.response.send_message(view=Panik(), ephemeral=False)
+        await interaction.response.send_message(view=Panik(self.bot), ephemeral=False)
 
 
 async def setup(bot: commands.Bot) -> None:
