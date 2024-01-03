@@ -113,6 +113,18 @@ class NitterFeedCog(commands.Cog):
             f"Unfollowed user {user}", ephemeral=True
         )
 
+    # manual sync
+    @app_commands.command(
+        name="nsync", description="Force sync follows"
+    )
+    async def nsync(self, interaction: discord.Interaction):
+        if not await devcheck(interaction):
+            return
+        await interaction.response.defer(ephemeral=True)
+        nitter_parse_followed()
+        await interaction.followup.send("Done")
+        
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(NitterFeedCog(bot), guild=labowor)
