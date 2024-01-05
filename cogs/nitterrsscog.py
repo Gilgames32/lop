@@ -115,7 +115,7 @@ class NitterFeedCog(commands.Cog):
         if not await devcheck(interaction):
             return
         await interaction.response.defer(ephemeral=True)
-        nitter_parse_followed()
+        await nitter_parse_followed()
         await interaction.followup.send("Done")
 
 
