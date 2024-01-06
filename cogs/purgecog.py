@@ -12,7 +12,7 @@ class PurgeCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # purge her own messages
-    @app_commands.command(name="purr", description="Purge her own messages")
+    @app_commands.command(name="purr", description="purge her own messages")
     @app_commands.describe(limit="number of messages to fetch")
     async def purge_self(self, interaction: discord.Interaction, limit: int):
         if not await devcheck(interaction):

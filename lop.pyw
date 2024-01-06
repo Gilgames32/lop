@@ -41,7 +41,8 @@ async def on_ready():
 
 
 # manual sync
-@bot.tree.command(name="sync", description="Sync the command tree", guild=labowor)
+# descriptions should follow the "This description will..." format
+@bot.tree.command(name="sync", description="sync the command tree", guild=labowor)
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
         return

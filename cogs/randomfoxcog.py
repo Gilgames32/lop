@@ -15,7 +15,7 @@ class RandomFoxCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # send a random fox
-    @app_commands.command(name="fox", description="Image of a random fox")
+    @app_commands.command(name="fox", description="send an image of a fox")
     async def random_fox(self, interaction: discord.Interaction):
         await interaction.response.defer()
         try:
@@ -26,7 +26,7 @@ class RandomFoxCog(commands.Cog):
         except Exception as e:
             await interaction.followup.send(str(e))
 
-    @app_commands.command(name="animal", description="Random image of a given animal")
+    @app_commands.command(name="animal", description="send an image of an animal")
     @app_commands.choices(
         animal=[
             app_commands.Choice(name="Bear", value="bear"),

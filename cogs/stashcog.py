@@ -31,7 +31,7 @@ class StashCog(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     # bulk download downloadables from channel history
-    @app_commands.command(name="stash", description="Bulk download old messages")
+    @app_commands.command(name="stash", description="bulk download old messages")
     @app_commands.describe(count="amount of messages processed")
     async def download_history(self, interaction: discord.Interaction, count: int):
         if not await devcheck(interaction):
@@ -53,7 +53,7 @@ class StashCog(commands.Cog):
         await interaction.edit_original_response(embed=embed)
 
     # save any file to stash
-    @app_commands.command(name="save", description="Save any file to stash")
+    @app_commands.command(name="save", description="save any file to stash")
     async def download_history(
         self, interaction: discord.Interaction, file: discord.Attachment, filename: str
     ):

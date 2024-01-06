@@ -83,7 +83,7 @@ class NitterFeedCog(commands.Cog):
 
     # add follows
     @app_commands.command(
-        name="follow", description="Follows a twitter user (for rss feeds)"
+        name="follow", description="follow a twitter user for rss"
     )
     @app_commands.describe(user="The tag of the user to follow")
     async def nitter_follow(self, interaction: discord.Interaction, user: str):
@@ -96,7 +96,7 @@ class NitterFeedCog(commands.Cog):
 
     # remove follows
     @app_commands.command(
-        name="unfollow", description="Unollows a twitter user (for rss feeds)"
+        name="unfollow", description="unollows a twitter user for rss"
     )
     @app_commands.describe(user="The tag of the user to unfollow")
     async def nitter_unfollow(self, interaction: discord.Interaction, user: str):
@@ -110,7 +110,7 @@ class NitterFeedCog(commands.Cog):
         )
 
     # manual sync
-    @app_commands.command(name="nsync", description="Force sync follows")
+    @app_commands.command(name="nsync", description="force parse rss follows")
     async def nsync(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return

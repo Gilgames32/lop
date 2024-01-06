@@ -14,7 +14,7 @@ class StatusCog(commands.Cog):
         self.bot = bot
         print("Loaded", __class__.__name__)
 
-    @app_commands.command(name="status", description="Sets the bot's status")
+    @app_commands.command(name="status", description="set the bot's status")
     @app_commands.choices(
         status=[
             app_commands.Choice(name="🟢", value="online"),

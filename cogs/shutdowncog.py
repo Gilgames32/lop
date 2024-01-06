@@ -44,7 +44,7 @@ class ShutdownCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # force shutdown
-    @app_commands.command(name="panik", description="Shut down the app")
+    @app_commands.command(name="panik", description="shut down the app")
     async def panic(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
