@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Lop",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/lop.pyw",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
