@@ -3,7 +3,6 @@ import os
 import asyncpraw
 import time
 
-from discord_webhook import DiscordWebhook
 from dotenv import load_dotenv
 
 from util.urlparser import anyembed, download, downloadpath, cleanurl
@@ -90,7 +89,7 @@ async def reddit_download(link: str):
 
 
 # reddit markdown for webhook
-async def reddit_markdown(link: str, webhook: DiscordWebhook):
+async def reddit_markdown(link: str):
     # refresh token
     reddit.reddit_reauth()
 
@@ -98,8 +97,10 @@ async def reddit_markdown(link: str, webhook: DiscordWebhook):
     post = RedditPost(link)
     await post.fetch()
 
-    # modify content
-    webhook.content = (
+    # return content
+    content = (
         f"[u/{post.author} on reddit](<{link}>)"
         + f' [{"-" if post.ext == "png" else "~"}]({post.medialink})'
     )
+
+    return content, None

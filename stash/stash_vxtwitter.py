@@ -1,5 +1,4 @@
 import requests
-from discord_webhook import DiscordWebhook
 from util.urlparser import anyembed
 
 from util.urlparser import download, downloadpath, cleanurl
@@ -62,7 +61,7 @@ async def tw_download(twlink: str):
 
 
 # twitter markdown for webhook
-async def tw_markdown(link: str, webhook: DiscordWebhook):
+async def tw_markdown(link: str):
     # get json from vxtwitter
     vxjson = vx_jsonget(link)
 
@@ -76,5 +75,5 @@ async def tw_markdown(link: str, webhook: DiscordWebhook):
     for glink in gallery:
         content += f' [{"-" if glink.split(".")[-1] == "png" else "~"}]({glink})'
 
-    # modify content
-    webhook.content = content
+    # return content
+    return content, None

@@ -98,20 +98,30 @@ class StashCog(commands.Cog):
             and message.channel.parent_id == tomarkdown_chid
         ):
             firstlink = message.content.split(" ")[0]
+            # generate content
+            file: discord.File
+            content, file = await anymkwebhook(firstlink)
 
-            webhook = DiscordWebhook(
-                url=webhookurl,
-                content="",
-                avatar_url=message.author.avatar.url,
-                username=message.author.display_name,
-            )
+            #if has content, send and delete
+            if content is not None:
+                webhook = DiscordWebhook(
+                    url=webhookurl,
+                    content=content,
+                    avatar_url=message.author.avatar.url,
+                    username=message.author.display_name,
+                )
 
-            if message.channel.type == discord.ChannelType.public_thread:
-                webhook.thread_id = message.channel.id
+                # set thread
+                if message.channel.type == discord.ChannelType.public_thread:
+                    webhook.thread_id = message.channel.id
 
-            if await anymkwebhook(firstlink, webhook):
+                # add file
+                if file is not None:
+                    webhook.add_file(file.fp, file.filename)
+
                 webhook.execute()
                 await message.delete()
+                
 
 
 async def setup(bot: commands.Bot) -> None:

@@ -1,4 +1,3 @@
-from discord_webhook import DiscordWebhook
 import e621
 import os
 from dotenv import load_dotenv
@@ -44,7 +43,7 @@ async def esix_download(link: str):
 
 
 # esix markdown for webhook
-async def esix_markdown(link: str, webhook: DiscordWebhook):
+async def esix_markdown(link: str):
     # get post
     epost = esix_getpost(link)
 
@@ -52,8 +51,9 @@ async def esix_markdown(link: str, webhook: DiscordWebhook):
     if epost.rating == "s":
         link = link.replace("e621", "e926")
 
-    # modify content
-    webhook.content = (
+    # return content
+    content = (
         f'[{epost.tags.artist[0]} on {"E926" if epost.rating == "s" else "E621"}](<{link}>)'
         + f' [{"-" if epost.file.ext == "png" else "~"}]({epost.file.url})'
     )
+    return content, None

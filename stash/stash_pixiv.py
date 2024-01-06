@@ -1,5 +1,6 @@
+import discord
 import requests
-from discord_webhook import DiscordWebhook
+import io
 
 from util.urlparser import anyembed, download, downloadpath
 
@@ -44,13 +45,15 @@ async def pixiv_download(link: str):
 
 
 # pixiv markdown for webhook
-async def pixiv_markdown(link: str, webhook: DiscordWebhook):
+async def pixiv_markdown(link: str):
     # get post
     pixpost = PixivPost(int(link.split("/")[-1]))
 
     # set artists name
-    webhook.content = f"[{pixpost.artist} on Pixiv](<{link}>)"
+    content = f"[{pixpost.artist} on Pixiv](<{link}>)"
 
     # funnly little trick
-    response = requests.get(pixpost.imgurl, headers=pixiv_baseheader(pixpost.id))
-    webhook.add_file(file=response.content, filename=pixpost.filename)
+    img = requests.get(pixpost.imgurl, headers=pixiv_baseheader(pixpost.id)).content
+    file = discord.File(io.BytesIO(img), filename=pixpost.filename)
+    
+    return content, file

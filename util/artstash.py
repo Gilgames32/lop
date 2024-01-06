@@ -1,4 +1,3 @@
-from discord_webhook import DiscordWebhook
 from util.urlparser import cleanurl
 from stash.stash_esix import esix_download, esix_markdown
 from stash.stash_vxtwitter import tw_download, tw_markdown
@@ -49,13 +48,12 @@ async def anydownload(link: str):
             return await hosts[host]["download"](link)
 
 
-async def anymkwebhook(link: str, webhook: DiscordWebhook):
+async def anymkwebhook(link: str):
     # strip url
     link = cleanurl(link)
 
     for host in hosts:
         if link.startswith(f"https://{host}/"):
-            await hosts[host]["markdown"](link, webhook)
-            return True
+            return await hosts[host]["markdown"](link)
     else:
-        return False
+        return None, None

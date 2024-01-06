@@ -3,7 +3,6 @@ from random import choice
 import discord
 from discord import app_commands
 from discord.ext import commands
-import discord_webhook
 
 from util.msgutil import devcheck
 from util.const import labowor, LOPDEBUG
