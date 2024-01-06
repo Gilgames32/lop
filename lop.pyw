@@ -37,7 +37,7 @@ async def main():
 async def on_ready():
     print(f"Logged in as {bot.user}")
     if LOPDEBUG:
-        print("Status set, debug mode enabled")
+        print("Debug mode enabled")
 
 
 # manual sync

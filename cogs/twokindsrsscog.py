@@ -15,9 +15,10 @@ class TKRSSCog(commands.Cog):
     # rss feedparse for twokinds
     @app_commands.command(name="twokinds", description="send the latest TwoKinds page")
     async def twokinds(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         tkfeed = feedparser.parse("https://twokinds.keenspot.com/feed.xml")
         newpagelink = tkfeed.entries[0]["links"][0]["href"]
-        await interaction.response.send_message(newpagelink)
+        await interaction.followup.send(newpagelink)
 
 
 async def setup(bot: commands.Bot) -> None:

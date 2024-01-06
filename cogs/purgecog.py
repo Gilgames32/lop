@@ -17,10 +17,13 @@ class PurgeCog(commands.Cog):
     async def purge_self(self, interaction: discord.Interaction, limit: int):
         if not await devcheck(interaction):
             return
+        
+        await interaction.response.defer()
+
         deleted = await interaction.channel.purge(
             limit=limit, check=lambda message: message.author.id == self.bot.user.id
         )
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f"Purrged {len(deleted)} messages", ephemeral=True
         )
 

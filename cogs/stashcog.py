@@ -43,22 +43,24 @@ class StashCog(commands.Cog):
         async for message in interaction.channel.history(limit=count):
             if message.author.bot:
                 continue
-            embed = anydownload(message.content)
+            embed = await anydownload(message.content)
             if embed is not None:
                 dlcount += 1
                 await message.add_reaction("🔽")
 
         embed = discord.Embed(title=f"Downloaded {dlcount} posts", color=0x009AFE)
         embed.set_footer(text=downloadpath)
-        await interaction.edit_original_response(embed=embed)
+        await interaction.followup.send(embed=embed)
 
     # save any file to stash
     @app_commands.command(name="save", description="save any file to stash")
-    async def download_history(
+    async def save_file(
         self, interaction: discord.Interaction, file: discord.Attachment, filename: str
     ):
         if not await devcheck(interaction):
             return
+
+        await interaction.response.defer()
 
         ext = file.filename.split(".")[-1]
         filename += "." + ext
@@ -72,7 +74,8 @@ class StashCog(commands.Cog):
         )
         embed.set_image(url=file.url)
         embed.set_footer(text=downloadpath)
-        await interaction.response.send_message(embed=embed, delete_after=(30 * 60))
+        
+        await interaction.followup.send(embed=embed, delete_after=(30 * 60))
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
