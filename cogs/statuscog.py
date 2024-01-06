@@ -1,7 +1,11 @@
+from dis import disco
+from random import choice
 import discord
 from discord import app_commands
 from discord.ext import commands
+import discord_webhook
 
+from util.msgutil import devcheck
 from util.const import labowor, LOPDEBUG
 
 
@@ -10,19 +14,55 @@ class StatusCog(commands.Cog):
         self.bot = bot
         print("Loaded", __class__.__name__)
 
-    # debug ping, also sets the status, snowflake
-    @app_commands.command(name="debug", description="Debug ping")
-    async def test(self, interaction: discord.Interaction):
-        await interaction.response.send_message(":3")
-        if LOPDEBUG:
+    @app_commands.command(name="status", description="Sets the bot's status")
+    @app_commands.choices(
+        status=[
+            app_commands.Choice(name="🟢", value="online"),
+            app_commands.Choice(name="🟡", value="idle"),
+            app_commands.Choice(name="🔴", value="dnd"),
+        ],
+        activity=[
+            app_commands.Choice(name="Playing", value="playing"),
+            app_commands.Choice(name="Streaming", value="streaming"),
+            app_commands.Choice(name="Listening to", value="listening"),
+            app_commands.Choice(name="Watching", value="watching"),
+            app_commands.Choice(name="Custom", value="custom"),
+            app_commands.Choice(name="Competing in", value="competing"),
+        ]
+    )
+    async def setstatus(self, interaction: discord.Interaction, status: app_commands.Choice[str] = "online", activity: app_commands.Choice[str] = "custom", text: str = None):
+        if not await devcheck(interaction):
             return
-        await self.bot.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.watching, name="Gil's nightmares"
-            )
-        )
 
-    # todo: proper status setter (not like im gonna use it)
+        if text is None:
+            await self.bot.change_presence()
+            await interaction.response.send_message("Status cleared", ephemeral=True)
+        else:
+            statusdict = {
+                "online": discord.Status.online,
+                "idle": discord.Status.idle,
+                "dnd": discord.Status.do_not_disturb,
+            }
+
+            activitydict = {
+                "playing": discord.Game(text),
+                "streaming": discord.Activity(type=discord.ActivityType.streaming, name=text),
+                "listening": discord.Activity(type=discord.ActivityType.listening, name=text),
+                "watching": discord.Activity(type=discord.ActivityType.watching, name=text),
+                "custom": discord.CustomActivity(name=text),
+                "competing": discord.Activity(type=discord.ActivityType.competing, name=text)
+            }
+
+            await self.bot.change_presence(
+                activity=activitydict[activity.value], status=statusdict[status.value]
+            )
+
+            content = f"Status set to {status.name}:\n"
+            if activity.value != "custom":
+                content += f"**{activity.name}** "
+            content += text
+
+            await interaction.response.send_message(content=content, ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:

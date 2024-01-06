@@ -37,12 +37,6 @@ async def main():
 async def on_ready():
     print(f"Logged in as {bot.user}")
     if LOPDEBUG:
-        await bot.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.playing, name="Debugging"
-            ),
-            status=discord.Status.dnd,
-        )
         print("Status set, debug mode enabled")
 
 
