@@ -21,7 +21,7 @@ async def nitter_loop():
 
 def nitter_parse_user(user: str):
     # load feed
-    feed = feedparser.parse(f"https://nitter.poast.org/{user}/rss")
+    feed = feedparser.parse(f"https://nitter.freedit.eu/{user}/rss")
 
     for post in feed["entries"]:
         author: str = post["author"]
@@ -66,13 +66,22 @@ def nitter_parse_user(user: str):
 
 
 async def nitter_parse_followed():
+    success = 0
     # parese users
     for user in conf["twfollows"]:
-        nitter_parse_user(user)
-
-    # record last sync time
-    conf["last_rss"] = time.time()
-    savejson("conf", conf)
+        try:
+            nitter_parse_user(user)
+            success += 1
+        except Exception as e:
+            print(e)
+    
+    # only if everything ran correctly
+    else:
+        # record last sync time
+        conf["last_rss"] = time.time()
+        savejson("conf", conf)
+    
+    return success
 
 
 class NitterFeedCog(commands.Cog):
@@ -115,8 +124,8 @@ class NitterFeedCog(commands.Cog):
         if not await devcheck(interaction):
             return
         await interaction.response.defer(ephemeral=True)
-        await nitter_parse_followed()
-        await interaction.followup.send("Done")
+        success = await nitter_parse_followed()
+        await interaction.followup.send(f"Fetched {success}/{len(conf['twfollows'])}")
 
 
 async def setup(bot: commands.Bot) -> None:
