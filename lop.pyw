@@ -40,17 +40,12 @@ async def main():
 async def on_ready():
     print(f"Logged in as {bot.user}")
     if LOPDEBUG:
-        await bot.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.playing, name="Debugging"
-            ),
-            status=discord.Status.dnd,
-        )
-        print("Status set, debug mode enabled")
+        print("Debug mode enabled")
 
 
 # manual sync
-@bot.tree.command(name="sync", description="Sync the command tree", guild=labowor)
+# descriptions should follow the "This description will..." format
+@bot.tree.command(name="sync", description="sync the command tree", guild=labowor)
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
         return
