@@ -70,7 +70,8 @@ async def tw_markdown(link: str, webhook: DiscordWebhook):
     gallery = vxjson["mediaURLs"]
 
     # setup content
-    content = f'[@{vxjson["user_screen_name"].replace("_", "\\_")} on Twitter](<{vxjson["tweetURL"]}>)'
+    username = vxjson["user_screen_name"].replace("_", "\\_")
+    content = f'[@{username} on Twitter](<{vxjson["tweetURL"]}>)'
 
     # add multiple posts if needed
     for glink in gallery:
