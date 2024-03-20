@@ -102,7 +102,7 @@ class StashCog(commands.Cog):
             webhook = DiscordWebhook(
                 url=webhookurl,
                 content="",
-                avatar_url=message.author.avatar.url,
+                avatar_url=message.author.display_avatar.url,
                 username=message.author.display_name,
             )
 
