@@ -24,6 +24,8 @@ def vx_jsonget(twlink: str):
         if twlink.startswith(f"https://{h}/"):
             twlink = twlink.replace(h, "api.vxtwitter.com")
             break
+    else:
+        return None
 
     # getting json
     vxjson = requests.get(twlink).json()
@@ -70,8 +72,8 @@ async def tw_markdown(link: str, webhook: DiscordWebhook):
     gallery = vxjson["mediaURLs"]
 
     # setup content
-    username = vxjson["user_screen_name"].replace("_", "\_")
-    content = f'[@{username} on Twitter](<{vxjson["tweetURL"]}>)'
+    handle = "\@" + vxjson["user_screen_name"].replace("_", "\_")
+    content = f'{handle} on [Twitter](<{vxjson["tweetURL"]}>)'
 
     # add multiple posts if needed
     for glink in gallery:

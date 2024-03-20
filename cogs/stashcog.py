@@ -6,7 +6,8 @@ from discord_webhook import DiscordWebhook
 from util.const import *
 from util.msgutil import *
 from util.artstash import anydownload, anymkwebhook
-from util.urlparser import downloadpath
+from util.urlparser import downloadpath, cleanurl
+from stash.stash_vxtwitter import vx_jsonget, tw_markdown
 
 
 class StashCog(commands.Cog):
@@ -76,6 +77,50 @@ class StashCog(commands.Cog):
         embed.set_footer(text=downloadpath)
         
         await interaction.followup.send(embed=embed, delete_after=(30 * 60))
+
+    
+    # twitter markdown with extra steps
+    @app_commands.command(name="twitter", description="send twitter as markdown")
+    async def save_file(
+        self, interaction: discord.Interaction, link: str, impersonate: bool = True
+    ):
+        if not await devcheck(interaction):
+            return
+        
+        await interaction.response.defer(ephemeral=True)
+
+        vxjson = vx_jsonget(cleanurl(link))
+        if vxjson is None:
+            await interaction.followup.send(embed=errorembed("Invalid link"), ephemeral=True)
+            return
+
+
+        webhook = DiscordWebhook(
+            url=webhookurl,
+            content="",
+            avatar_url=interaction.user.display_avatar.url if not impersonate else vxjson["user_profile_image_url"].replace("_normal", ""),
+            username=interaction.user.display_name if not impersonate else vxjson["user_screen_name"],
+        )
+
+
+        if impersonate:
+            webhook.content = f'[Brought to you by {interaction.user.display_name}](<{vxjson["tweetURL"]}>)'
+        else:
+            handle = "\@" + vxjson["user_screen_name"].replace("_", "\_")
+            webhook.content = f'{handle} on [Twitter](<{vxjson["tweetURL"]}>)'
+
+        for glink in vxjson["mediaURLs"]:
+            webhook.content += f' [{"-" if glink.split(".")[-1] == "png" else "~"}]({glink})'
+
+        # remove the last word (duplicate link)
+        webhook.content += "\n" + " ".join(vxjson["text"].split(" ")[:-1])
+
+
+        if interaction.channel.type == discord.ChannelType.public_thread:
+            webhook.thread_id = interaction.channel.id
+        
+        webhook.execute()
+        await interaction.followup.send("✅", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
