@@ -70,7 +70,7 @@ async def tw_markdown(link: str, webhook: DiscordWebhook):
     gallery = vxjson["mediaURLs"]
 
     # setup content
-    username = vxjson["user_screen_name"].replace("_", "\\_")
+    username = vxjson["user_screen_name"].replace("_", "\_")
     content = f'[@{username} on Twitter](<{vxjson["tweetURL"]}>)'
 
     # add multiple posts if needed
