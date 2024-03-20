@@ -21,9 +21,6 @@ bot = commands.Bot(command_prefix=".", description="A bot by Gil", intents=inten
 # load cogs
 async def load_cogs():
     for filename in os.listdir("./cogs"):
-        # skip cogs marked Do Not Load
-        if filename.startswith("dnl_"):
-            continue
         if filename.endswith(".py"):
             await bot.load_extension(f"cogs.{filename[:-3]}")
 
