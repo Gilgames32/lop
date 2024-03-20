@@ -6,11 +6,11 @@ from stash.stash_pixiv import pixiv_download, pixiv_markdown
 from stash.stash_reddit import reddit_download, reddit_markdown
 
 hosts = {
-    "e621.net": {
+    "e621.net/posts": {
         "download": esix_download,
         "markdown": esix_markdown,
     },
-    "e926.net": {
+    "e926.net/posts": {
         "download": esix_download,
         "markdown": esix_markdown
     },
