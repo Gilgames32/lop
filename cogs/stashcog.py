@@ -14,7 +14,7 @@ class StashCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.ctx_menu = app_commands.ContextMenu(
-            name="NewDown",
+            name="Stash",
             callback=self.ctxdown,
         )
         self.bot.tree.add_command(self.ctx_menu, guild=labowor)

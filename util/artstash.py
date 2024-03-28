@@ -1,3 +1,4 @@
+import re
 from discord_webhook import DiscordWebhook
 from util.urlparser import cleanurl
 from stash.stash_esix import esix_download, esix_markdown
@@ -5,6 +6,7 @@ from stash.stash_vxtwitter import tw_download, tw_markdown
 from stash.stash_pixiv import pixiv_download, pixiv_markdown
 from stash.stash_reddit import reddit_download, reddit_markdown
 
+# todo: use regex here too
 hosts = {
     "e621.net/posts": {
         "download": esix_download,
@@ -41,7 +43,14 @@ hosts = {
 }
 
 async def anydownload(link: str):
-    # strip url
+    # allows to fetch links from bot-sent markdown link formatted messages
+    mdlink = re.search("\(<.+>\)", link)
+    if mdlink:
+        link = mdlink.group()[2:-2]
+    else:
+        link = link.split(" ")[0]
+    
+    # clear trackers
     link = cleanurl(link)
 
     for host in hosts:
