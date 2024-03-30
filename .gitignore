@@ -4,3 +4,4 @@ gif-collections.json
 __pycache__/
 .venv/
 .env
+.vscode/
