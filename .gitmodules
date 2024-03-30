@@ -1,0 +1,3 @@
+[submodule "caption-redux"]
+	path = caption-redux
+	url = https://github.com/Gilgames32/caption-redux.git
