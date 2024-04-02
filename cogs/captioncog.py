@@ -3,7 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.const import labowor
-from util.msgutil import devcheck, errorembed
+from util.msgutil import devcheck, errorembed, errorrespond
 
 from caption.src.pipeline import caption
 
@@ -14,8 +14,15 @@ class CaptionCog(commands.Cog):
 
     # caption gifs and stuff
     @app_commands.command(name="caption", description="caption media")
-    async def twokinds(self, interaction: discord.Interaction, link: str, text: str):
+    async def twokinds(self, interaction: discord.Interaction, text: str, link: str = None, image: discord.Attachment = None):
         if not await devcheck(interaction):
+            return
+        
+        if image is not None:
+            link = image.url
+
+        if link is None:
+            await errorrespond(interaction, "No media provided")
             return
 
         await interaction.response.defer()
