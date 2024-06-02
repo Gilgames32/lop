@@ -19,7 +19,7 @@ def vx_jsonget(twlink: str):
         twlink = "/".join(splittwlink[:-2])
 
     # replace with api.vxtwitter
-    hosts = ["twitter.com", "fxtwitter.com", "vxtwitter.com", "x.com"]
+    hosts = ["twitter.com", "fxtwitter.com", "vxtwitter.com", "x.com", "fixupx.com"]
     for h in hosts:
         if twlink.startswith(f"https://{h}/"):
             twlink = twlink.replace(h, "api.vxtwitter.com")
