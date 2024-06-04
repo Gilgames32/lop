@@ -18,7 +18,7 @@ class PixivPost:
         self.artist = artwork["userName"]
         self.id = postid
         self.imgurl = artwork["urls"]["original"]
-        self.imgext = artwork["urls"]["original"].split(".")[-1]
+        self.imgext = None if self.imgurl is None else artwork["urls"]["original"].split(".")[-1]
         self.filename = f"{self.artist}_{self.id}.{self.imgext}"
 
 
@@ -26,6 +26,9 @@ class PixivPost:
 async def pixiv_download(link: str):
     # get post
     pixpost = PixivPost(int(link.split("/")[-1]))
+
+    if pixpost.imgurl is None:
+        return errorembed("Unable to fetch, post is most likely restricted. Result to manual downloads or `phixiv`.")
 
     # download in artist_postid.ext format
     download(

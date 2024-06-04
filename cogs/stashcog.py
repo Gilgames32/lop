@@ -23,13 +23,16 @@ class StashCog(commands.Cog):
     async def ctxdown(self, interaction: discord.Interaction, message: discord.Message):
         if not await devcheck(interaction):
             return
+        
+        await interaction.response.defer(ephemeral=True)
+
         embed = await anydownload(message.content)
         if embed is None:
             embed = errorembed(
                 "The message must start with a valid link\n"
                 "Currently supported sites: twitter, e621, e926, pixiv, reddit"
             )
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
     # bulk download downloadables from channel history
     @app_commands.command(name="stash", description="bulk download old messages")
