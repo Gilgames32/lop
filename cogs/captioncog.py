@@ -27,7 +27,7 @@ class CaptionCog(commands.Cog):
 
         await interaction.response.defer()
         try:
-            out = caption(link, text, silent=False)
+            out = caption(link, text)
             await interaction.followup.send(text, file=discord.File(out))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)))
