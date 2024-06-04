@@ -39,6 +39,9 @@ load_dotenv()
 conf = loadjson("conf")
 LOPDEBUG = conf["debug"]
 
+# downloads
+downloadpath = conf["downloadpath"]
+
 # ids
 dev = conf["dev"]
 labowor = discord.Object(id=conf["labowor"])

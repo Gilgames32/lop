@@ -6,7 +6,7 @@ from discord_webhook import DiscordWebhook
 from util.const import *
 from util.msgutil import *
 from util.artstash import anydownload, anymkwebhook
-from util.urlparser import downloadpath, cleanurl
+from util.urlparser import cleanurl
 from stash.stash_vxtwitter import vx_jsonget, tw_markdown
 
 

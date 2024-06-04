@@ -2,7 +2,8 @@ import requests
 from discord_webhook import DiscordWebhook
 
 from util.urlparser import anyembed
-from util.urlparser import download, downloadpath, cleanurl
+from util.urlparser import download, cleanurl
+from util.const import downloadpath
 
 
 # parse url and prepare download link

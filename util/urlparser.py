@@ -1,10 +1,7 @@
 import requests
 import os
 from discord import Embed
-
-downloadpath = "C:/GIL/Down/"
-with open("./downloadpath.txt", "r") as f:
-    downloadpath = f.read()
+from util.const import downloadpath
 
 
 # downloads an image by link, saves to path as filename
