@@ -32,6 +32,10 @@ hosts = {
         "download": tw_download,
         "markdown": tw_markdown
     },
+    "fixvx.com": {
+        "download": tw_download,
+        "markdown": tw_markdown
+    },
     "www.pixiv.net": {
         "download": pixiv_download,
         "markdown": pixiv_markdown
