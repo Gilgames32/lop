@@ -14,7 +14,7 @@ class CaptionCog(commands.Cog):
 
     # caption gifs and stuff
     @app_commands.command(name="caption", description="caption media")
-    async def twokinds(self, interaction: discord.Interaction, text: str, link: str = None, image: discord.Attachment = None):
+    async def twokinds(self, interaction: discord.Interaction, text: str, link: str = None, image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False) -> None:
         if not await devcheck(interaction):
             return
         
@@ -27,7 +27,7 @@ class CaptionCog(commands.Cog):
 
         await interaction.response.defer()
         try:
-            out = caption(link, text)
+            out = caption(link, text, force_gif, gif_transparency)
             await interaction.followup.send(text, file=discord.File(out))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)))
