@@ -3,10 +3,8 @@ from random import choice
 import discord
 from discord import app_commands
 from discord.ext import commands
-import discord_webhook
 
 from util.msgutil import devcheck
-from util.const import labowor, LOPDEBUG
 
 
 class StatusCog(commands.Cog):
@@ -14,6 +12,8 @@ class StatusCog(commands.Cog):
         self.bot = bot
         print("Loaded", __class__.__name__)
 
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="status", description="set the bot's status")
     @app_commands.choices(
         status=[
@@ -66,4 +66,4 @@ class StatusCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(StatusCog(bot), guild=labowor)
+    await bot.add_cog(StatusCog(bot))

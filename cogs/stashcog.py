@@ -17,7 +17,7 @@ class StashCog(commands.Cog):
             name="Stash",
             callback=self.ctxdown,
         )
-        self.bot.tree.add_command(self.ctx_menu, guild=labowor)
+        self.bot.tree.add_command(self.ctx_menu)
         print("Loaded", __class__.__name__)
 
     async def ctxdown(self, interaction: discord.Interaction, message: discord.Message):
@@ -163,4 +163,4 @@ class StashCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(StashCog(bot), guild=labowor)
+    await bot.add_cog(StashCog(bot))

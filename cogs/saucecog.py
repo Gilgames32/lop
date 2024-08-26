@@ -5,7 +5,6 @@ from discord.ext import commands
 import os
 from pysaucenao import SauceNao
 
-from util.const import labowor
 from util.msgutil import *
 
 
@@ -17,7 +16,7 @@ class SauceCog(commands.Cog):
             name="SauceNAO",
             callback=self.saucefind,
         )
-        self.bot.tree.add_command(self.ctx_menu, guild=labowor)
+        self.bot.tree.add_command(self.ctx_menu)
         print("Loaded", __class__.__name__)
 
     # reverse image search with saucenao
@@ -71,4 +70,4 @@ class SauceCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(SauceCog(bot), guild=labowor)
+    await bot.add_cog(SauceCog(bot))

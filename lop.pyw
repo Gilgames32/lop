@@ -9,6 +9,7 @@ from util.msgutil import *
 
 import asyncio
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -42,12 +43,14 @@ async def on_ready():
 
 # manual sync
 # descriptions should follow the "This description will..." format
-@bot.tree.command(name="sync", description="sync the command tree", guild=labowor)
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+@bot.tree.command(name="sync", description="sync the command tree")
 async def sync_cmd(interaction: discord.Interaction):
     if not await devcheck(interaction):
         return
     await interaction.response.defer(ephemeral=True)
-    await bot.tree.sync(guild=interaction.guild)
+    await bot.tree.sync()
     await interaction.followup.send("Command tree synced")
 
 

@@ -2,7 +2,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from util.const import labowor
 from util.msgutil import devcheck, errorembed, errorrespond
 
 from caption.src.pipeline import caption
@@ -13,8 +12,10 @@ class CaptionCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # caption gifs and stuff
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="caption", description="caption media")
-    async def twokinds(self, interaction: discord.Interaction, text: str, link: str = None, image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False) -> None:
+    async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False) -> None:
         if not await devcheck(interaction):
             return
         
@@ -35,4 +36,4 @@ class CaptionCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(CaptionCog(bot), guild=labowor)
+    await bot.add_cog(CaptionCog(bot))

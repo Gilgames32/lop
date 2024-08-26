@@ -5,9 +5,6 @@ from discord.ext import commands
 import requests
 import io
 
-from util.const import labowor
-from util.msgutil import devcheck
-
 
 class RandomFoxCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -15,6 +12,8 @@ class RandomFoxCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # send a random fox
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="fox", description="send an image of a fox")
     async def random_fox(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -26,6 +25,9 @@ class RandomFoxCog(commands.Cog):
         except Exception as e:
             await interaction.followup.send(str(e))
 
+    # send a random animal
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="animal", description="send an image of an animal")
     @app_commands.choices(
         animal=[
@@ -65,4 +67,4 @@ class RandomFoxCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(RandomFoxCog(bot), guild=labowor)
+    await bot.add_cog(RandomFoxCog(bot))

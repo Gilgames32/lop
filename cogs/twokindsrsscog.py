@@ -4,8 +4,6 @@ from discord.ext import commands
 
 import feedparser
 
-from util.const import labowor
-
 
 class TKRSSCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -13,6 +11,8 @@ class TKRSSCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # rss feedparse for twokinds
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="twokinds", description="send the latest TwoKinds page")
     async def twokinds(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -22,4 +22,4 @@ class TKRSSCog(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(TKRSSCog(bot), guild=labowor)
+    await bot.add_cog(TKRSSCog(bot))
