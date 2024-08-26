@@ -41,13 +41,15 @@ class Tweet(Post):
         if photo:
             self._media.append(vxjson["mediaURLs"][photo - 1])
         else:
-            for media in vxjson["mediaURLs"]:
-                # i hate compression so much dude its unreal
-                if media.endswith(".jpg"):
-                    media = media.replace(".jpg", "?format=jpg&name=orig")
-                elif media.endswith(".png"):
-                    media = media.replace(".png", "?format=png&name=orig")
-                self._media.append(media)
+            self._media = vxjson["mediaURLs"]
+
+        # high res images
+        for i, media in enumerate(self._media):
+            # i hate compression so much dude its unreal
+            if media.endswith(".jpg"):
+                self._media[i] += "?format=jpg&name=orig"
+            elif media.endswith(".png"):
+                self._media[i] += "?format=png&name=orig"
         
         # pfp
         self._author_icon = vxjson["user_profile_image_url"]
@@ -66,9 +68,7 @@ class Tweet(Post):
         elif self._media[0].endswith("mp4"):
             self._thumbnail = vxjson["media_extended"][0]["thumbnail_url"]
             self._type = PostType.VIDEO
-        elif self._media[0].endswith("jpg") or self._media[0].endswith("png"):
-            self._type = PostType.IMAGE
         else:
-            self._type = PostType.UNKNOWN
+            self._type = PostType.IMAGE
 
         await super().fetch()

@@ -2,6 +2,8 @@ from enum import Enum
 from discord import Embed
 from discord.utils import escape_markdown
 
+from util.urlparser import download, downloadembed
+
 
 class PostType(Enum):
     TEXT = 1
@@ -95,13 +97,26 @@ class Post:
             message = " ".join(message[:1997].split(" ")[:-1]) + "..." # profound mental retardation
         return message
     
-    def download(self, path: str):
+    def download(self, path: str) -> Embed:
+        if not self._fetched:
+            raise Exception("The post was not fetched")
         if self._type not in [PostType.IMAGE, PostType.VIDEO, PostType.GALLERY]:
             raise Exception("This post is not downloadable")
         
         # download media
-        # TODO
-        pass
+        if self._type == PostType.GALLERY:
+            for i, url in enumerate(self._media):
+                ext = url.split('.')[-1].split('?')[0]
+                filename = f"{self._author}_{self._id}_{i}.{ext}"
+                download(url, path, filename)
+        else:
+            url = self._media[0]
+            ext = url.split('.')[-1].split('?')[0]
+            filename = f"{self._author}_{self._id}.{ext}"
+            download(url, path, filename)
+
+        thumbnail = self._thumbnail if self._type == PostType.VIDEO else self._media[0]
+        return downloadembed(self._url, thumbnail, filename)
         
 
 

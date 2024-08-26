@@ -1,9 +1,5 @@
+from discord import Embed
 import requests
-from discord_webhook import DiscordWebhook
-
-from util.urlparser import anyembed, download
-from util.const import downloadpath
-from util.msgutil import errorembed
 
 # base header so that we dont get 403
 pixiv_baseheader = lambda x: {
@@ -57,3 +53,11 @@ class PixivPost(Post):
         self._type = PostType.GALLERY if len(self._media) > 1 else PostType.IMAGE
 
         await super().fetch()
+
+    def download(self, path: str) -> Embed:
+        # skull emoji (im lazy)
+        tmp = self._media
+        self._media = [self._fullres]
+        embed = super().download(path)
+        self._media = tmp
+        return embed

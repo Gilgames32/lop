@@ -6,6 +6,7 @@ from util.const import *
 from util.msgutil import *
 from util.supported import anypost
 from util.whook import threadhook_send
+from util.urlparser import downloadpath
 
 
 class StashCog(commands.Cog):
@@ -55,16 +56,18 @@ class StashCog(commands.Cog):
             return
 
         # auto download from #to-stash
-        """
         if message.channel.id == tostash_chid:
-            embed = await anydownload(message.content)
-            if embed is not None:
-                await message.delete()
-                await message.channel.send(embed=embed, delete_after=(30 * 60))
-        """
+            firstlink = message.content.split(" ")[0]
+            post = anypost(firstlink)
+            if not post:
+                return
+            
+            await post.fetch()
+            embed = post.download(downloadpath)
 
-        if False:
-            pass
+            await message.delete()
+            await message.channel.send(embed=embed, delete_after=(30 * 60))
+
         # embed to markdown
         else:
             firstlink = message.content.split(" ")[0]
