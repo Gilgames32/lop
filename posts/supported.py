@@ -1,5 +1,5 @@
 import re
-from posts.post import Post, PostType
+from posts.post import Post
 from posts.twitterpost import Tweet
 from posts.redditpost import RedditPost
 from posts.pixivpost import PixivPost
