@@ -43,42 +43,41 @@ class RedditPost(Post):
         # type
         self._type = RedditPost.post_type(submission)
 
-        match self._type:
-            case PostType.IMAGE:
-                self._media.append(submission.url)
-
-            case PostType.GALLERY:
-                image_dict = submission.media_metadata
-                for i in image_dict:
-                    pattern = r"/([^/?]+)(?:\?|$)"
-                    self._media.append(
-                        "https://i.redd.it/"
-                        + re.search(pattern, image_dict[i]["s"]["u"]).group(1)
-                    )
-
-            case PostType.VIDEO:
-                # reddit is stupit and has the video and audio in separate sources
-                # besides discord doesnt allow videos in embeds
-                self._thumbnail = submission.thumbnail
-                self._media.append(submission.media["reddit_video"]["fallback_url"])
-
-            case PostType.POLL:
-                # TODO
-                self._text = "polls arent supported yet"
-
-            case PostType.CROSSPOST:
-                # TODO
-                self._text = "crossposts arent supported yet"
-                self._parent = Post(
-                    reddit.submission(
-                        url="https://reddit.com"
-                        + submission.crosspost_parent_list[0]["permalink"]
-                    )
+        if self._type is PostType.IMAGE:
+            self._media.append(submission.url)
+        
+        elif self._type is PostType.GALLERY:
+            image_dict = submission.media_metadata
+            for i in image_dict:
+                pattern = r"/([^/?]+)(?:\?|$)"
+                self._media.append(
+                    "https://i.redd.it/"
+                    + re.search(pattern, image_dict[i]["s"]["u"]).group(1)
                 )
-                # self._parent.fetch()
 
-            case PostType.TEXT:
-                self._text = submission.selftext
+        elif self._type is PostType.VIDEO:
+            # reddit is stupit and has the video and audio in separate sources
+            # besides discord doesnt allow videos in embeds
+            self._thumbnail = submission.thumbnail
+            self._media.append(submission.media["reddit_video"]["fallback_url"])
+
+        elif self._type is PostType.POLL:
+            # TODO
+            self._text = "polls arent supported yet"
+
+        elif self._type is PostType.CROSSPOST:
+            # TODO
+            self._text = "crossposts arent supported yet"
+            self._parent = Post(
+                reddit.submission(
+                    url="https://reddit.com"
+                    + submission.crosspost_parent_list[0]["permalink"]
+                )
+            )
+            # self._parent.fetch()
+
+        elif self._type is PostType.TEXT:
+            self._text = submission.selftext
 
         await super().fetch()
 

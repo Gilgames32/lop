@@ -78,20 +78,19 @@ class Post:
         message += f"on [{self._platform}](<{self._url}>) "
 
         # media
-        match self._type:
-            case PostType.TEXT:
-                pass
-            case PostType.IMAGE:
-                message += f"[.]({self._media[0]})"
-            case PostType.GALLERY:
-                for url in self._media:
-                    message += f"[.]({url}) "
-            case PostType.VIDEO:
-                message += f"[.]({self._media[0]})"
-            case PostType.POLL:
-                raise Exception("Polls are not supported yet")
-            case PostType.CROSSPOST:
-                raise Exception("Crossposts are not supported yet")
+        if self._type is PostType.TEXT:
+            pass
+        elif self._type is PostType.IMAGE:
+            message += f"[.]({self._media[0]})"
+        elif self._type is PostType.GALLERY:
+            for url in self._media:
+                message += f"[.]({url}) "
+        elif self._type is PostType.VIDEO:
+            message += f"[.]({self._media[0]})"
+        elif self._type is PostType.POLL:
+            raise Exception("Polls are not supported yet")
+        elif self._type is PostType.CROSSPOST:
+            raise Exception("Crossposts are not supported yet")
 
         if len(message) > 2000:
             message = " ".join(message[:1997].split(" ")[:-1]) + "..." # profound mental retardation
