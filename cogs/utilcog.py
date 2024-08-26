@@ -7,7 +7,7 @@ from discord.ext import commands
 from util.msgutil import devcheck
 
 
-class StatusCog(commands.Cog):
+class UtilCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         print("Loaded", __class__.__name__)
@@ -64,6 +64,63 @@ class StatusCog(commands.Cog):
 
             await interaction.response.send_message(content=content, ephemeral=True)
 
+    # purge her own messages
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    @app_commands.command(name="purr", description="purge her own messages")
+    @app_commands.describe(limit="number of messages to fetch")
+    async def purge_self(self, interaction: discord.Interaction, limit: int):
+        if not await devcheck(interaction):
+            return
+        
+        await interaction.response.defer()
+
+        deleted = await interaction.channel.purge(
+            limit=limit, check=lambda message: message.author.id == self.bot.user.id
+        )
+        await interaction.followup.send(
+            f"Purrged {len(deleted)} messages", ephemeral=True
+        )
+    
+    # force shutdown
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    @app_commands.command(name="panik", description="shut down the app")
+    async def panic(self, interaction: discord.Interaction):
+        if not await devcheck(interaction):
+            return
+        await interaction.response.send_message(view=Panik(self.bot), ephemeral=False)
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(StatusCog(bot))
+    await bot.add_cog(UtilCog(bot))
+
+# view for panik shutdown
+class Panik(discord.ui.View):
+    bot: commands.Bot
+
+    def __init__(self, bot: commands.Bot):
+        Panik.bot = bot
+        super().__init__()
+
+    @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
+    async def shutdown(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
+        if not await devcheck(interaction):
+            return
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        await interaction.message.delete()
+
+        await Panik.bot.close()
+        await Panik.bot.http.close()
+        await Panik.bot.session.close()
+        Panik.bot.loop.close()
+
+    @discord.ui.button(emoji="✖", style=discord.ButtonStyle.red)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not await devcheck(interaction):
+            return
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        await interaction.message.delete()

@@ -1,5 +1,4 @@
 discord-py
-discord_webhook
 e621-stable
 python-dotenv
 asyncpraw

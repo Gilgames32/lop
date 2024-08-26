@@ -20,7 +20,7 @@ def cleanurl(url: str):
 
 
 # generic embed for downloads
-def anyembed(url: str, imgurl: str, filename: str):
+def downloadembed(url: str, imgurl: str, filename: str):
     embed = Embed(title="Image downloaded", url=url, color=0x009AFE)
     embed.add_field(
         name=filename,
