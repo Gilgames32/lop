@@ -2,18 +2,12 @@ import re
 import requests
 
 from util.post import Post, PostType
-from util.urlparser import cleanurl
 
 class Tweet(Post):
     _platform = "Twitter"
     _prefix = "@"
 
-    async def fetch(self):
-        # remove trackers
-        self._url = cleanurl(self._url)
-
-        photo = False
-        
+    async def fetch(self):        
         photopattern = r"https://[^/]+/([^/]+)/status/(\d+)/photo/(\d+)"
         match = re.search(photopattern, self._url)
         if match:
