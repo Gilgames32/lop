@@ -1,14 +1,12 @@
 from discord_webhook import DiscordWebhook
 import e621
 import os
-from dotenv import load_dotenv
 
 from util.urlparser import anyembed, download
 from util.const import downloadpath
 
 
 # init
-load_dotenv()
 esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
 
 
