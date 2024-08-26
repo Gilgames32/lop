@@ -1,9 +1,9 @@
 import re
-from util.post import Post, PostType
-from util.twitterpost import Tweet
-from util.redditpost import RedditPost
-from util.pixivpost import PixivPost
-from util.esixpost import EsixPost
+from posts.post import Post, PostType
+from posts.twitterpost import Tweet
+from posts.redditpost import RedditPost
+from posts.pixivpost import PixivPost
+from posts.esixpost import EsixPost
 
 def anypost(url: str) -> Post:
     if not url.startswith("https://"):

@@ -3,7 +3,7 @@ import re
 
 from discord import Embed
 
-from util.post import Post, PostType
+from posts.post import Post, PostType
 
 # base header so that we dont get 403
 pixiv_baseheader = lambda x: {

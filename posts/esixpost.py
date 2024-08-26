@@ -2,7 +2,7 @@ from discord_webhook import DiscordWebhook
 import e621
 import os
 
-from util.post import Post, PostType
+from posts.post import Post, PostType
 
 esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
 

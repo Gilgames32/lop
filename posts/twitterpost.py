@@ -1,7 +1,7 @@
 import re
 import requests
 
-from util.post import Post, PostType
+from posts.post import Post, PostType
 
 class Tweet(Post):
     _platform = "Twitter"

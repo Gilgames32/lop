@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from util.const import *
 from util.msgutil import *
-from util.supported import anypost
+from posts.supported import anypost
 from util.whook import threadhook_send
 from util.urlparser import downloadpath
 

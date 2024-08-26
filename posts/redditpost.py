@@ -2,7 +2,7 @@ import os
 import re
 import asyncpraw
 
-from util.post import Post, PostType
+from posts.post import Post, PostType
 
 reddit = asyncpraw.Reddit(
     client_id=os.getenv("REDDITCID"),
