@@ -1,3 +1,6 @@
 [submodule "caption-redux"]
 	path = caption
 	url = https://github.com/Gilgames32/caption-redux.git
+[submodule "neptunfej"]
+	path = neptunfej
+	url = https://github.com/Gilgames32/neptunfej.git
