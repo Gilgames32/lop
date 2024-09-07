@@ -2,10 +2,12 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+import io
+
 from util.msgutil import devcheck, errorembed, errorrespond
 
 from caption.src.pipeline import caption
-import neptunfej
+import neptunfej.generate 
 
 class CaptionCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -16,7 +18,7 @@ class CaptionCog(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="caption", description="caption media")
-    async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False) -> None:
+    async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False, echo: bool = False) -> None:
         if not await devcheck(interaction):
             return
         
@@ -30,7 +32,7 @@ class CaptionCog(commands.Cog):
         await interaction.response.defer()
         try:
             out = caption(link, text, force_gif, gif_transparency)
-            await interaction.followup.send(text, file=discord.File(out))
+            await interaction.followup.send(text if echo else None, file=discord.File(out))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)))
 
@@ -44,8 +46,10 @@ class CaptionCog(commands.Cog):
 
         await interaction.response.defer()
         try:
-            out = neptunfej.generate(text, 2, (10, 10))
-            await interaction.followup.send(text, file=discord.File(out))
+            with io.BytesIO() as image_binary:
+                neptunfej.generate.neptunfej(text, 2, (10, 10)).save(image_binary, "png")
+                image_binary.seek(0)
+                await interaction.followup.send(file=discord.File(image_binary, "neptun.png"))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)))
         
