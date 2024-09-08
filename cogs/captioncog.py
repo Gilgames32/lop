@@ -40,14 +40,12 @@ class CaptionCog(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="neptun", description="/pa")
-    async def neptun(self, interaction: discord.Interaction, text: str = "forgot the caption") -> None:
-        if not await devcheck(interaction):
-            return
-
+    async def neptun(self, interaction: discord.Interaction, text: str = "forgot the caption", reverse: bool = False) -> None:
+        # what could go wrong letting people use this command :clueless:
         await interaction.response.defer()
         try:
             with io.BytesIO() as image_binary:
-                neptunfej.generate.neptunfej(text, 2, (10, 10)).save(image_binary, "png")
+                neptunfej.generate.neptunfej(text, 2, (10, 10), reverse).save(image_binary, "png")
                 image_binary.seek(0)
                 await interaction.followup.send(file=discord.File(image_binary, "neptun.png"))
         except Exception as e:
