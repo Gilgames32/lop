@@ -4,6 +4,7 @@ from posts.twitterpost import Tweet
 from posts.redditpost import RedditPost
 from posts.pixivpost import PixivPost
 from posts.esixpost import EsixPost
+from posts.bskypost import BskyPost
 
 def anypost(url: str) -> Post:
     if not url.startswith("https://"):
@@ -12,6 +13,7 @@ def anypost(url: str) -> Post:
     url = url.split("?")[0]
     
     # FIXME: repeated code
+    # "god i wish there was an easier way to do this"
     if "twitter.com" in url or "x.com" in url:
         pattern = r"https://[^/]+/[^/]+/status/\d+"
         if re.search(pattern, url):
@@ -35,6 +37,11 @@ def anypost(url: str) -> Post:
         pattern = r"https://e\d+\.net/posts/\d+"
         if re.search(pattern, url):
             return EsixPost(url)
+    
+    elif "bsky.app" in url:
+        pattern = r"https://bsky\.app/profile/[^/]+/post/[^/]+"
+        if re.search(pattern, url):
+            return BskyPost(url)
     
     return None
 
