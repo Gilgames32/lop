@@ -1,4 +1,3 @@
-from discord_webhook import DiscordWebhook
 import e621
 import os
 

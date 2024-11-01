@@ -24,6 +24,10 @@ class RedditPost(Post):
         # url
         self._url = submission.shortlink
 
+        # check parent
+        if hasattr(submission, "crosspost_parent"):
+            self._parent = submission.crosspost_parent_list[0]
+
         # author
         author = await reddit.redditor(submission.author.name)
         await author.load()
@@ -35,8 +39,6 @@ class RedditPost(Post):
             else submission.subreddit_name_prefixed
         )
 
-        # TODO: id from shortlink
-
         # title
         self._title = submission.title
 
@@ -45,6 +47,7 @@ class RedditPost(Post):
 
         if self._type is PostType.IMAGE:
             self._media.append(submission.url)
+            self._thumbnail = submission.thumbnail
         
         elif self._type is PostType.GALLERY:
             image_dict = submission.media_metadata
@@ -54,27 +57,23 @@ class RedditPost(Post):
                     "https://i.redd.it/"
                     + re.search(pattern, image_dict[i]["s"]["u"]).group(1)
                 )
+            self._thumbnail = submission.thumbnail
 
         elif self._type is PostType.VIDEO:
-            # reddit is stupit and has the video and audio in separate sources
-            # besides discord doesnt allow videos in embeds
+            video = submission.media["reddit_video"]
+            video_url = video["fallback_url"]
+
+            # for audio we need to find the url that includes it
+            if video["has_audio"]:
+                video_url = "https://rxddit.com/v" + submission.permalink
+
+            self._media.append(video_url)
             self._thumbnail = submission.thumbnail
-            self._media.append(submission.media["reddit_video"]["fallback_url"])
+
 
         elif self._type is PostType.POLL:
-            # TODO
-            self._text = "polls arent supported yet"
-
-        elif self._type is PostType.CROSSPOST:
-            # TODO
-            self._text = "crossposts arent supported yet"
-            self._parent = Post(
-                reddit.submission(
-                    url="https://reddit.com"
-                    + submission.crosspost_parent_list[0]["permalink"]
-                )
-            )
-            # self._parent.fetch()
+            self._text = submission.selftext.split("\n\n[View Poll]")[0]
+            self._poll_options = [o.text for o in submission.poll_data.options]
 
         elif self._type is PostType.TEXT:
             self._text = submission.selftext
@@ -95,8 +94,6 @@ class RedditPost(Post):
             return PostType.VIDEO
         elif hasattr(subm, "poll_data"):
             return PostType.POLL
-        elif hasattr(subm, "crosspost_parent"):
-            return PostType.CROSSPOST
         elif subm.is_self:
             return PostType.TEXT
         else:

@@ -18,8 +18,11 @@ def anypost(url: str) -> Post:
             return Tweet(url)
         
     elif "reddit.com" in url:
-        # TODO: reddit short urls?
         pattern = r"https://www\.reddit\.com/[a-z]/[^/]+/comments/[^/]+/[^/]+"
+        if re.search(pattern, url):
+            return RedditPost(url)
+    elif "redd.it" in url:
+        pattern = r"https://redd\.it/\w+"
         if re.search(pattern, url):
             return RedditPost(url)
         

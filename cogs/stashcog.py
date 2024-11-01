@@ -45,7 +45,7 @@ class StashCog(commands.Cog):
         post = anypost(link)
         await post.fetch()
         
-        await threadhook_send(interaction.channel, self.bot, post.webhook_message(), post.webhook_username(), post.webhook_avatar())
+        await threadhook_send(interaction.channel, self.bot, post.get_message(), post.get_username(), post.get_avatar())
         
         await interaction.followup.send("✅", ephemeral=True)
 
@@ -76,7 +76,7 @@ class StashCog(commands.Cog):
                 return
 
             await post.fetch()
-            await threadhook_send(message.channel, self.bot, post.webhook_message(True), message.author.display_name, message.author.display_avatar)
+            await threadhook_send(message.channel, self.bot, post.get_message(True), message.author.display_name, message.author.display_avatar)
             await message.delete()
 
 

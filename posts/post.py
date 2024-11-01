@@ -11,11 +11,11 @@ class PostType(Enum):
     GALLERY = 3
     VIDEO = 4
     POLL = 5
-    CROSSPOST = 6
-    UNKNOWN = 7
+    UNKNOWN = 6
 
 
 class Post:
+    # TODO: a more object oriented approach instead of posttype
     _prefix = ""
     _platform = "unknown"
 
@@ -41,27 +41,26 @@ class Post:
         self._thumbnail = None
 
         # poll
-        self._poll = None
+        self._poll_options = []
 
-        # crosspost
+        # crosspost/retweet/quote
         self._parent = None
 
     async def fetch(self):
         self._fetched = True
-    
-    def webhook_avatar(self) -> str:
+    def get_avatar(self) -> str:
         return self._author_icon
 
-    def webhook_username(self) -> str:
+    def get_username(self) -> str:
         return self._prefix + self._author
 
-    def webhook_message(self, include_author = False, markdown = False) -> str:
+    def get_message(self, include_author = False, markdown = False) -> str:
         if not self._fetched:
             raise Exception("The post was not fetched")
-
+        
         # title
         if self._title:
-            message = f"**{self._title if markdown else escape_markdown(self._title)}**\n\n"
+            message = f"**{escape_markdown(self._title)}**\n\n"
         else:
             message = ""
 
@@ -71,26 +70,22 @@ class Post:
             if not self._title:
                 message += "\n"
 
+        # poll
+        for option in self._poll_options:
+            message += f"- {option}\n"
+
         # footer
         message += f"-# Posted "
         if include_author:
-            message += f"by {self._prefix}{self._author if markdown else escape_markdown(self._author)} "
+            message += f"by {self._prefix}{escape_markdown(self._author)} "
         message += f"on [{self._platform}](<{self._url}>) "
 
         # media
-        if self._type is PostType.TEXT:
-            pass
-        elif self._type is PostType.IMAGE:
+        if self._type in [PostType.IMAGE, PostType.VIDEO]:
             message += f"[.]({self._media[0]})"
-        elif self._type is PostType.GALLERY:
+        elif self._type == PostType.GALLERY:
             for url in self._media:
                 message += f"[.]({url}) "
-        elif self._type is PostType.VIDEO:
-            message += f"[.]({self._media[0]})"
-        elif self._type is PostType.POLL:
-            raise Exception("Polls are not supported yet")
-        elif self._type is PostType.CROSSPOST:
-            raise Exception("Crossposts are not supported yet")
 
         if len(message) > 2000:
             message = " ".join(message[:1997].split(" ")[:-1]) + "..." # profound mental retardation
@@ -117,10 +112,3 @@ class Post:
         thumbnail = self._thumbnail if self._type == PostType.VIDEO else self._media[0]
         return downloadembed(self._url, thumbnail, filename)
         
-
-
-class Poll:
-    def __init__(self):
-        self._title = None
-        self._options = [] # stored in tuples (option, votes)
-        self._total_votes = 0
