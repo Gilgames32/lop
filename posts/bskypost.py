@@ -30,11 +30,13 @@ class BskyPost(Post):
         if post.value.embed:
             if hasattr(post.value.embed, "images"):
                 for media in post.value.embed.images:
-                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}")
+                    ext = media.image.mime_type.split('/')[-1]
+                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.png")
                 self._type = PostType.IMAGE
             elif hasattr(post.value.embed, "video"):
                 # TODO thumbnail
-                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={post.value.embed.video.ref.link}")
+                ext = post.value.embed.video.mime_type.split('/')[-1]
+                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={post.value.embed.video.ref.link}&.{ext}")
                 self._type = PostType.VIDEO
             
             if len(self._media) > 1:
