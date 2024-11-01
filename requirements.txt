@@ -4,3 +4,4 @@ python-dotenv
 asyncpraw
 pysaucenao
 feedparser
+atproto

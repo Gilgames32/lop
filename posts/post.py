@@ -15,13 +15,14 @@ class PostType(Enum):
 
 
 class Post:
-    # TODO: a more object oriented approach instead of posttype
+    # TODO: should revrite prolly
     _prefix = ""
     _platform = "unknown"
 
     def __init__(self, url: str):
         # common
         self._url = url
+        # TODO: separate author name and handle
         self._author = None
         self._author_icon = None
         self._title = None
@@ -48,6 +49,7 @@ class Post:
 
     async def fetch(self):
         self._fetched = True
+
     def get_avatar(self) -> str:
         return self._author_icon
 
