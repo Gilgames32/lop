@@ -31,7 +31,7 @@ class BskyPost(Post):
             if hasattr(post.value.embed, "images"):
                 for media in post.value.embed.images:
                     ext = media.image.mime_type.split('/')[-1]
-                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.png")
+                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.{ext}")
                 self._type = PostType.IMAGE
             elif hasattr(post.value.embed, "video"):
                 # TODO thumbnail
