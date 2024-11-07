@@ -6,7 +6,7 @@ import io
 
 from util.msgutil import devcheck, errorembed, errorrespond
 
-from caption.src.pipeline import caption
+import caption.captionredux
 import neptunfej.generate 
 
 class CaptionCog(commands.Cog):
@@ -31,7 +31,7 @@ class CaptionCog(commands.Cog):
 
         await interaction.response.defer()
         try:
-            out = caption(link, text, force_gif, gif_transparency)
+            out = caption.captionredux.caption(link, text, force_gif, gif_transparency)
             await interaction.followup.send(text if echo else None, file=discord.File(out))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)))
