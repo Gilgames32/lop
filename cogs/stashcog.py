@@ -49,6 +49,18 @@ class StashCog(commands.Cog):
         
         await interaction.followup.send("✅", ephemeral=True)
 
+
+    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    @app_commands.command(name="fx", description="fix embeds")
+    async def fx(self, interaction: discord.Interaction, link: str):
+        await interaction.response.defer()
+
+        post = anypost(link)
+        await post.fetch()
+        
+        await interaction.followup.send(post.get_message(True))
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         # ignore bots
