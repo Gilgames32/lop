@@ -20,7 +20,7 @@ def anypost(url: str) -> Post:
             return Tweet(url)
         
     elif "reddit.com" in url:
-        pattern = r"https://www\.reddit\.com/[a-z]/[^/]+/comments/[^/]+/[^/]+"
+        pattern = r"https://www\.reddit\.com/[ur]/[^/]+/[a-z]+/[^/]+"
         if re.search(pattern, url):
             return RedditPost(url)
     elif "redd.it" in url:
