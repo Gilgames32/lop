@@ -24,6 +24,9 @@ class RedditPost(Post):
         # url
         self._url = submission.shortlink
 
+        # id
+        self._id = submission.id
+
         # check parent
         if hasattr(submission, "crosspost_parent"):
             self._parent = submission.crosspost_parent_list[0]
