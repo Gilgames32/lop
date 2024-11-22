@@ -29,10 +29,16 @@ class RedditPost(Post):
             self._parent = submission.crosspost_parent_list[0]
 
         # author
-        author = await reddit.redditor(submission.author.name)
-        await author.load()
-        self._author = author.name
-        self._author_icon = author.icon_img.split("?")[0]
+        if submission.author is None:
+            self._author = "[deleted]"
+            self._author_icon = None
+        else:
+            author = await reddit.redditor(submission.author.name)
+            await author.load()
+            self._author = author.name
+            self._author_icon = author.icon_img.split("?")[0]
+        
+        # platform
         self._platform = (
             "Reddit"
             if submission.subreddit_type == "user"
