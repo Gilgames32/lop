@@ -1,30 +1,37 @@
-import e621
+import requests
 import os
 
 from posts.post import Post, PostType
 
-esix = e621.E621(("kapucni", os.getenv("E621TOKEN")))
 
 class EsixPost(Post):
     _platform = "E621"
     _prefix = ""
 
+    _endpoint = "https://e621.net/posts.json?tags=id:"
+    _user_agent = "Lop on Discord by Kapucni"
+
     async def fetch(self):
-        self._id = int(self._url.split("/")[4])
-        epost = esix.posts.get(self._id)
-        # remove conditional dnp from artists
-        if "conditional_dnp" in epost.tags.artist:
-            epost.tags.artist.remove("conditional_dnp")
+        self._id = self._url.split("/")[4]
 
-        # if it really has no artist
-        if epost.tags.artist == []:
-            epost.tags.artist.append("unknown")
+        response = requests.get(self._endpoint + self._id, headers={"User-Agent": self._user_agent})
+        if response.status_code != 200:
+            raise Exception("Error fetching post from E621")
 
+        post = response.json()["posts"][0]
 
-        self._author = epost.tags.artist[0]
+        artists = post["tags"]["artist"]
+        if "conditional_dnp" in artists: artists.remove("conditional_dnp")
+        self._author = artists[0] if artists else "unknown"
+
         self._author_icon = ""
-        self._media = [epost.file.url]
 
-        self._type = PostType.IMAGE if epost.file.ext in ["png", "jpg", "jpeg", "gif"] else PostType.VIDEO
+        self._media.append(post["file"]["url"])
+
+        self._type = (
+            PostType.IMAGE
+            if post["file"]["ext"] in ["png", "jpg", "jpeg", "gif"]
+            else PostType.VIDEO
+        )
 
         await super().fetch()
