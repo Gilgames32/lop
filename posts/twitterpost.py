@@ -20,7 +20,6 @@ class Tweet(Post):
             if not match:
                 raise Exception("Invalid tweet link")
         
-        self._author = match.group(1)
         self._id = match.group(2)
 
         self._url = f"https://twitter.com/{self._author}/status/{self._id}"
@@ -31,6 +30,9 @@ class Tweet(Post):
         
         # get json from vxtwitter
         vxjson = requests.get(f"https://api.vxtwitter.com/{self._author}/status/{self._id}").json()
+        
+        # author
+        self._author = vxjson["user_name"]
         
         # media
         if photo:
