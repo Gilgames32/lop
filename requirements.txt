@@ -1,5 +1,4 @@
 discord-py
-e621-stable
 python-dotenv
 asyncpraw
 pysaucenao

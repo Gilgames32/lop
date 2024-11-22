@@ -32,7 +32,6 @@ An oddly specific Discord bot written in Python.
     SAUCETOKEN=your saucenao token, you monster
     WEBHOOK32=webhook link of the channel where embeds are replaced
     WEBHOOK_DEBUG=webhook link for debugging, or just use the latter
-    E621TOKEN=your e621 token, you monster
     REDDITCID=your reddit client id
     REDDITCSECRET=your reddit client secret
     ```

@@ -42,10 +42,12 @@ class StashCog(commands.Cog):
         
         await interaction.response.defer(ephemeral=True)
 
-        post = anypost(link)
-        await post.fetch()
-        
-        await threadhook_send(interaction.channel, self.bot, post.get_message(), post.get_username(), post.get_avatar())
+        try:
+            post = anypost(link)
+            await post.fetch()
+            await threadhook_send(interaction.channel, self.bot, post.get_message(impersonate), post.get_username(), post.get_avatar())
+        except Exception as e:
+            await interaction.followup.send(embed=errorembed(str(e[:2000])))
         
         await interaction.followup.send("✅", ephemeral=True)
 
@@ -56,10 +58,12 @@ class StashCog(commands.Cog):
     async def fx(self, interaction: discord.Interaction, link: str):
         await interaction.response.defer()
 
-        post = anypost(link)
-        await post.fetch()
-        
-        await interaction.followup.send(post.get_message(True))
+        try:
+            post = anypost(link)
+            await post.fetch()
+            await interaction.followup.send(post.get_message(True))
+        except Exception as e:
+            await interaction.followup.send(embed=errorembed(str(e[:2000])))
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -74,11 +78,13 @@ class StashCog(commands.Cog):
             if not post:
                 return
             
-            await post.fetch()
-            embed = post.download(downloadpath)
-
-            await message.delete()
-            await message.channel.send(embed=embed, delete_after=(30 * 60))
+            try:
+                await post.fetch()
+                embed = post.download(downloadpath)
+                await message.delete()
+                await message.channel.send(embed=embed, delete_after=(30 * 60))
+            except Exception:
+                pass
 
         # embed to markdown
         else:
@@ -87,9 +93,12 @@ class StashCog(commands.Cog):
             if not post:
                 return
 
-            await post.fetch()
-            await threadhook_send(message.channel, self.bot, post.get_message(True), message.author.display_name, message.author.display_avatar)
-            await message.delete()
+            try:
+                await post.fetch()
+                await threadhook_send(message.channel, self.bot, post.get_message(True), message.author.display_name, message.author.display_avatar)
+                await message.delete()
+            except Exception:
+                pass
 
 
 async def setup(bot: commands.Bot) -> None:
