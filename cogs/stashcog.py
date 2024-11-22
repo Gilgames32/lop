@@ -47,7 +47,7 @@ class StashCog(commands.Cog):
             await post.fetch()
             await threadhook_send(interaction.channel, self.bot, post.get_message(impersonate), post.get_username(), post.get_avatar())
         except Exception as e:
-            await interaction.followup.send(embed=errorembed(str(e[:2000])))
+            await interaction.followup.send(embed=errorembed(str(e)[:2000]))
         
         await interaction.followup.send("✅", ephemeral=True)
 
@@ -63,7 +63,7 @@ class StashCog(commands.Cog):
             await post.fetch()
             await interaction.followup.send(post.get_message(True))
         except Exception as e:
-            await interaction.followup.send(embed=errorembed(str(e[:2000])))
+            await interaction.followup.send(embed=errorembed(str(e)[:2000]))
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
