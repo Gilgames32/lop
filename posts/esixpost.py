@@ -18,7 +18,10 @@ class EsixPost(Post):
         if response.status_code != 200:
             raise Exception("Error fetching post from E621")
 
-        post = response.json()["posts"][0]
+        posts = response.json()["posts"]
+        if not posts:
+            raise Exception("Post not found")
+        post = posts[0]
 
         artists = post["tags"]["artist"]
         if "conditional_dnp" in artists: artists.remove("conditional_dnp")
