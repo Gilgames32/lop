@@ -18,12 +18,12 @@ class CaptionCog(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="caption", description="caption media")
-    async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", image: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False, echo: bool = False) -> None:
+    async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", file: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False, echo: bool = False) -> None:
         if not await devcheck(interaction):
             return
         
-        if image is not None:
-            link = image.url
+        if file is not None:
+            link = file.url
 
         if link is None:
             await errorrespond(interaction, "No media provided")
