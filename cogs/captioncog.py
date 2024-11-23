@@ -15,7 +15,7 @@ class CaptionCog(commands.Cog):
         print("Loaded", __class__.__name__)
 
     # caption gifs and stuff
-    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_installs(guilds=False, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="caption", description="caption media")
     async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", file: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False, echo: bool = False) -> None:

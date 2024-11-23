@@ -43,7 +43,7 @@ async def on_ready():
 
 # manual sync
 # descriptions should follow the "This description will..." format
-@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_installs(guilds=False, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.tree.command(name="sync", description="sync the command tree")
 async def sync_cmd(interaction: discord.Interaction):

@@ -12,7 +12,7 @@ class UtilCog(commands.Cog):
         self.bot = bot
         print("Loaded", __class__.__name__)
 
-    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_installs(guilds=False, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="status", description="set the bot's status")
     @app_commands.choices(
@@ -65,8 +65,8 @@ class UtilCog(commands.Cog):
             await interaction.response.send_message(content=content, ephemeral=True)
 
     # purge her own messages
-    @app_commands.allowed_installs(guilds=True, users=True)
-    @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    @app_commands.allowed_installs(guilds=True, users=False)
+    @app_commands.allowed_contexts(guilds=True, dms=False, private_channels=True)
     @app_commands.command(name="purr", description="purge her own messages")
     @app_commands.describe(limit="number of messages to fetch")
     async def purge_self(self, interaction: discord.Interaction, limit: int):
@@ -83,18 +83,24 @@ class UtilCog(commands.Cog):
         )
     
     # force shutdown
-    @app_commands.allowed_installs(guilds=True, users=True)
+    @app_commands.allowed_installs(guilds=False, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-    @app_commands.command(name="panik", description="shut down the app")
-    async def panic(self, interaction: discord.Interaction):
+    @app_commands.command(name="shutdown", description="shut down the app")
+    async def shutdown(self, interaction: discord.Interaction):
         if not await devcheck(interaction):
             return
-        await interaction.response.send_message(view=Panik(self.bot), ephemeral=False)
+        await interaction.response.send_message("Shutting down...", ephemeral=True)
+        try:
+            await self.bot.http.close()
+            await self.bot.close()
+        except Exception as e:
+            print(e)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(UtilCog(bot))
 
 # view for panik shutdown
+# TODO: deprecate
 class Panik(discord.ui.View):
     bot: commands.Bot
 

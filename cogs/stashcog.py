@@ -33,6 +33,8 @@ class StashCog(commands.Cog):
 
     
     # twitter markdown with extra steps
+    @app_commands.allowed_installs(guilds=True, users=False)
+    @app_commands.allowed_contexts(guilds=True, dms=False, private_channels=True)
     @app_commands.command(name="impersonate", description="send twitter as markdown")
     async def impersonate(
         self, interaction: discord.Interaction, link: str, impersonate: bool = True
