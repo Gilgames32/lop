@@ -32,7 +32,7 @@ class Tweet(Post):
         vxjson = requests.get(f"https://api.vxtwitter.com/{self._author}/status/{self._id}").json()
         
         # author
-        self._author = vxjson["user_name"]
+        self._author = vxjson["user_screen_name"]
         
         # media
         if photo:
