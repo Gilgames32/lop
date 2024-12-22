@@ -26,17 +26,18 @@ class BskyPost(Post):
         # TODO: surround links with <> to prevent embeds
         self._text = post.value.text
 
+        embed_media = post.value.embed.media if hasattr(post.value.embed, "media") else post.value.embed if post.value.embed else None
 
-        if post.value.embed:
-            if hasattr(post.value.embed, "images"):
-                for media in post.value.embed.images:
+        if embed_media:
+            if hasattr(embed_media, "images"):
+                for media in embed_media.images:
                     ext = media.image.mime_type.split('/')[-1]
                     self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.{ext}")
                 self._type = PostType.IMAGE
-            elif hasattr(post.value.embed, "video"):
+            elif hasattr(embed_media, "video"):
                 # TODO thumbnail
-                ext = post.value.embed.video.mime_type.split('/')[-1]
-                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={post.value.embed.video.ref.link}&.{ext}")
+                ext = embed_media.video.mime_type.split('/')[-1]
+                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={embed_media.video.ref.link}&.{ext}")
                 self._type = PostType.VIDEO
             
             if len(self._media) > 1:
