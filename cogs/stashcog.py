@@ -12,24 +12,7 @@ from util.urlparser import downloadpath
 class StashCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.ctx_menu = app_commands.ContextMenu(
-            name="Stash",
-            callback=self.ctxdown,
-        )
-        self.bot.tree.add_command(self.ctx_menu)
         print("Loaded", __class__.__name__)
-
-    async def ctxdown(self, interaction: discord.Interaction, message: discord.Message):
-        if not await devcheck(interaction):
-            return
-        
-        await interaction.response.defer(ephemeral=True)
-
-        # FIXME: this needs to be reworked
-        embed = None
-        if embed is None:
-            embed = errorembed("This action is not supported yet")
-        await interaction.followup.send(embed=embed, ephemeral=True)
 
     
     # twitter markdown with extra steps
