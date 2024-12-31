@@ -35,6 +35,7 @@ class NitterFeed(Feed):
         self.feed = feedparser.parse(response.text)
 
     def get_posts(self):
+        # TODO: filter
         return map(NitterFeed.tweetify, self.entries)
 
     def tweetify(entry):

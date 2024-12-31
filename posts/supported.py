@@ -14,12 +14,10 @@ def anypost(url: str) -> Post:
     
     patterns = {
         "twitter.com": (r"https://[^/]+/[^/]+/status/\d+", Tweet),
-        "x.com": (r"https://[^/]+/[^/]+/status/\d+", Tweet),
         "reddit.com": (r"https://www\.reddit\.com/[ur]/[^/]+/[a-z]+/[^/]+", RedditPost),
         "redd.it": (r"https://redd\.it/\w+", RedditPost),
         "pixiv.net": (r"https://www\.pixiv\.net/en/artworks/\d+", PixivPost),
         "e621.net": (r"https://e\d+\.net/posts/\d+", EsixPost),
-        "e926.net": (r"https://e\d+\.net/posts/\d+", EsixPost),
         "bsky.app": (r"https://bsky\.app/profile/[^/]+/post/[^/]+", BskyPost),
     }
 

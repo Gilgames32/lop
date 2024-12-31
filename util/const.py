@@ -18,10 +18,11 @@ CONFPATH = "./conf.json"
 conf = {}
 
 def loadconf():
-    return loadjson(CONFPATH)
+    global conf
+    conf = loadjson(CONFPATH)
 
-def saveconf(conffile = conf):
-    savejson(CONFPATH, conffile)
+def saveconf():
+    savejson(CONFPATH, conf)
 
 
 # init
@@ -30,7 +31,7 @@ load_dotenv()
 # load config
 if not os.path.exists("./conf.json"):
     raise FileNotFoundError("conf.json not found")
-conf = loadconf()
+loadconf()
 
 LOPDEBUG = conf["debug"]
 downloadpath = conf["downloadpath"]

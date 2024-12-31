@@ -4,3 +4,4 @@ asyncpraw
 pysaucenao
 feedparser
 atproto
+selenium
