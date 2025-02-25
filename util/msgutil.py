@@ -36,7 +36,10 @@ async def devcheck(interaction: discord.Interaction):
         return False
 
 def escape_markdown_extra(text: str, unembed_liks = False) -> str:
+    # TODO: test order of operations
+    text = escape_markdown(text)
+
     if unembed_liks:
         text = re.sub(r'<(https?://\S+)>', r'\1', text)
     
-    return escape_markdown(text)
+    return text

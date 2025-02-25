@@ -21,5 +21,5 @@ def anyfeed(url: str) -> Feed:
         if domain in url and re.search(pattern, url):
             return feed_class(url)
     
-    return None
+    return Feed(url)
 

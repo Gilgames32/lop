@@ -2,6 +2,7 @@ import feedparser
 import time
 
 from posts.post import Post
+from posts.rsspost import RSSPost
 
 class Feed(): 
     HEADERS = {'User-Agent': "Lop"}
@@ -20,5 +21,4 @@ class Feed():
         self.entries = filter(lambda entry: after <= time.mktime(entry.published_parsed) < before, self.feed.entries)
 
     def get_posts(self) -> list[Post]:
-        # TODO: generic implementation
-        raise NotImplementedError
+        return list(map(lambda entry: RSSPost(entry, self.feed), self.entries))

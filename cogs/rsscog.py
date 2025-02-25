@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 
 import time
 
-from feeds.supportedfeeds import anyfeed
+from feeds.supportedfeeds import FEEDPATTERNS, anyfeed
 from util.const import *
 from util.msgutil import *
 from util.whook import threadhook_send
@@ -29,6 +29,8 @@ class RSSCog(commands.GroupCog, group_name='rss'):
         for feed_url, channels in conf["rss"].items():
             # fetch feed and posts
             feed = anyfeed(feed_url)
+            if not feed:
+                continue
             feed.fetch_new_entries(after, before)
             posts = reversed(feed.get_posts())
             
@@ -48,10 +50,19 @@ class RSSCog(commands.GroupCog, group_name='rss'):
         await self.bot.wait_until_ready()
 
 
+    @app_commands.command(name="fetch", description="force fetch rss feeds")
+    async def forcefetch(self, interaction: discord.Interaction):
+        if not await devcheck(interaction):
+            return
+        
+        self.rss_parse_all.restart()
+        await interaction.response.send_message("Force fetched RSS feeds", ephemeral=True)
 
+    
+    @app_commands.command(name="supported", description="list all sites with extra support")
+    async def supported(self, interaction: discord.Interaction):
+        await interaction.response.send_message("\n".join(map(lambda x: f"{x}: `{FEEDPATTERNS[x][0]}`", FEEDPATTERNS)), ephemeral=True)
 
-
-                
 
     @app_commands.command(name="add", description="add an rss feed")
     async def addfeed(self, interaction: discord.Interaction, feed: str):
