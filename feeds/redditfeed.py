@@ -9,5 +9,5 @@ class RedditFeed(Feed):
         response = requests.get('https://www.reddit.com/r/Szormok_AVE/.rss', headers=Feed.HEADERS)
         self.feed = feedparser.parse(response.text)
 
-    def get_posts(self):
-        return map(lambda entry: RedditPost(entry.link), self.entries)
+    def get_posts(self) -> list[RedditPost]:
+        return list(map(lambda entry: RedditPost(entry.link), self.entries))

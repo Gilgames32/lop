@@ -90,6 +90,8 @@ class RedditPost(Post):
         await super().fetch()
 
     async def fetch(self):
+        if self._fetched:
+            return
         # fetch
         submission = await reddit.submission(url=self._url)
         await self.generate(submission)

@@ -8,6 +8,9 @@ class Tweet(Post):
     _prefix = "@"
 
     async def fetch(self):
+        if self._fetched:
+            return
+        
         photo = None
         photopattern = r"https://[^/]+/([^/]+)/status/(\d+)/photo/(\d+)"
         match = re.search(photopattern, self._url)

@@ -98,35 +98,3 @@ class UtilCog(commands.Cog):
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(UtilCog(bot))
-
-# view for panik shutdown
-# TODO: deprecate
-class Panik(discord.ui.View):
-    bot: commands.Bot
-
-    def __init__(self, bot: commands.Bot):
-        Panik.bot = bot
-        super().__init__()
-
-    @discord.ui.button(emoji="✔", style=discord.ButtonStyle.green)
-    async def shutdown(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
-        if not await devcheck(interaction):
-            return
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
-        await interaction.message.delete()
-
-        await Panik.bot.close()
-        await Panik.bot.http.close()
-        await Panik.bot.session.close()
-        Panik.bot.loop.close()
-
-    @discord.ui.button(emoji="✖", style=discord.ButtonStyle.red)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if not await devcheck(interaction):
-            return
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
-        await interaction.message.delete()

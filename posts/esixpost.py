@@ -12,6 +12,9 @@ class EsixPost(Post):
     _user_agent = "Lop on Discord by Kapucni"
 
     async def fetch(self):
+        if self._fetched:
+            return
+        
         self._id = self._url.split("/")[4]
 
         response = requests.get(self._endpoint + self._id, headers={"User-Agent": self._user_agent})

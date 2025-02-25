@@ -1,6 +1,8 @@
 import feedparser
 import time
 
+from posts.post import Post
+
 class Feed(): 
     HEADERS = {'User-Agent': "Lop"}
     
@@ -17,6 +19,6 @@ class Feed():
             self.fetch_feed()
         self.entries = filter(lambda entry: after <= time.mktime(entry.published_parsed) < before, self.feed.entries)
 
-    def get_posts(self):
-        # TODO
-        pass
+    def get_posts(self) -> list[Post]:
+        # TODO: generic implementation
+        raise NotImplementedError

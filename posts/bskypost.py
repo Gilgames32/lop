@@ -12,6 +12,9 @@ class BskyPost(Post):
     _prefix = "@"
 
     async def fetch(self):
+        if self._fetched:
+            return
+        
         match = re.search(r'https://bsky\.app/profile/([^/]+)/post/([^/]+)', self._url)
         if not match:
             raise Exception("Invalid Bluesky link")
@@ -23,7 +26,6 @@ class BskyPost(Post):
         self._author_icon = user.avatar
 
         post = bsky.get_post(self._id, self._author)
-        # TODO: surround links with <> to prevent embeds
         self._text = post.value.text
 
         embed_media = post.value.embed.media if hasattr(post.value.embed, "media") else post.value.embed if post.value.embed else None

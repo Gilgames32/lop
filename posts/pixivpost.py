@@ -15,6 +15,9 @@ class PixivPost(Post):
     _prefix = ""
 
     async def fetch(self):
+        if self._fetched:
+            return
+        
         self._id = int(re.search(r"\d+", self._url).group())
         
         artwork = requests.get(f"https://www.pixiv.net/ajax/illust/{self._id}").json()[

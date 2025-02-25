@@ -34,9 +34,9 @@ class NitterFeed(Feed):
         
         self.feed = feedparser.parse(response.text)
 
-    def get_posts(self):
+    def get_posts(self) -> list[Tweet]:
         # TODO: filter
-        return map(NitterFeed.tweetify, self.entries)
+        return list(map(NitterFeed.tweetify, self.entries))
 
     def tweetify(entry):
         match = re.search(NitterFeed.POST_PATTERN, entry.link)

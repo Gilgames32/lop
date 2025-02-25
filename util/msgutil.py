@@ -1,6 +1,7 @@
 import discord
 from util.const import dev
-
+import re
+from discord.utils import escape_markdown
 
 # return uniform embed for errors
 def errorembed(error: str):
@@ -33,3 +34,9 @@ async def devcheck(interaction: discord.Interaction):
     else:
         await errorrespond(interaction, f"Only <@{dev}> is allowed to use this command")
         return False
+
+def escape_markdown_extra(text: str, unembed_liks = False) -> str:
+    if unembed_liks:
+        text = re.sub(r'<(https?://\S+)>', r'\1', text)
+    
+    return escape_markdown(text)

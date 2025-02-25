@@ -1,7 +1,7 @@
 from enum import Enum
 from discord import Embed
-from discord.utils import escape_markdown
 
+from util.msgutil import escape_markdown_extra
 from util.urlparser import download, downloadembed
 
 
@@ -48,6 +48,8 @@ class Post:
         self._parent = None
 
     async def fetch(self):
+        if self._fetched:
+            return
         self._fetched = True
 
     def get_avatar(self) -> str:
@@ -56,19 +58,19 @@ class Post:
     def get_username(self) -> str:
         return self._prefix + self._author
 
-    def get_message(self, include_author = False, markdown = False) -> str:
+    def get_message(self, include_author = False, allow_markdown_in_body = False, escape_embed_links = True) -> str:
         if not self._fetched:
             raise Exception("The post was not fetched")
         
         # title
         if self._title:
-            message = f"**{escape_markdown(self._title)}**\n\n"
+            message = f"**{escape_markdown_extra(self._title, escape_embed_links)}**\n\n"
         else:
             message = ""
 
         # text
         if self._text:
-            message += f"{self._text if markdown else escape_markdown(self._text)}\n"
+            message += f"{self._text if allow_markdown_in_body else escape_markdown_extra(self._text, escape_embed_links)}\n"
             if not self._title:
                 message += "\n"
 
@@ -79,7 +81,7 @@ class Post:
         # footer
         message += f"-# Posted "
         if include_author:
-            message += f"by {self._prefix}{escape_markdown(self._author)} "
+            message += f"by {self._prefix}{escape_markdown_extra(self._author)} "
         message += f"on [{self._platform}](<{self._url}>) "
 
         # media

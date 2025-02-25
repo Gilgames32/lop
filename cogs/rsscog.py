@@ -4,8 +4,10 @@ from discord.ext import commands, tasks
 
 import time
 
+from feeds.supportedfeeds import anyfeed
 from util.const import *
 from util.msgutil import *
+from util.whook import threadhook_send
 
 
 
@@ -20,18 +22,21 @@ class RSSCog(commands.GroupCog, group_name='rss'):
     @tasks.loop(hours=4)
     async def rss_parse_all(self):
         print("Parsing rss feeds")
-        return
         
         before = time.time()
         after = conf["last_sync"]
 
         for feed_url, channels in conf["rss"].items():
+            # fetch feed and posts
             feed = anyfeed(feed_url)
-            # TODO
-            # fetch posts
-            # post posts
-            for channel in channels:
-                pass
+            feed.fetch_new_entries(after, before)
+            posts = reversed(feed.get_posts())
+            
+            for post in posts:
+                await post.fetch()
+                for channel_id in channels:
+                    channel = self.bot.get_channel(channel_id)
+                    await threadhook_send(channel, self.bot, post.get_message(), post.get_username(), post.get_avatar())
                 
         
         conf["last_sync"] = before
