@@ -4,13 +4,14 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from util.loghelper import log_cog_load, log, log_command
 from util.msgutil import devcheck
 
 
 class UtilCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
 
     @app_commands.allowed_installs(guilds=False, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
@@ -31,6 +32,7 @@ class UtilCog(commands.Cog):
         ]
     )
     async def setstatus(self, interaction: discord.Interaction, status: app_commands.Choice[str] = "online", activity: app_commands.Choice[str] = "custom", text: str = None):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
 
@@ -70,6 +72,7 @@ class UtilCog(commands.Cog):
     @app_commands.command(name="purr", description="purge her own messages")
     @app_commands.describe(limit="number of messages to fetch")
     async def purge_self(self, interaction: discord.Interaction, limit: int):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
@@ -87,6 +90,7 @@ class UtilCog(commands.Cog):
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="shutdown", description="shut down the app")
     async def shutdown(self, interaction: discord.Interaction):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         await interaction.response.send_message("Shutting down...", ephemeral=True)
@@ -94,7 +98,7 @@ class UtilCog(commands.Cog):
             await self.bot.http.close()
             await self.bot.close()
         except Exception as e:
-            print(e)
+            log.error(f"Error during shutdown: {e}")
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(UtilCog(bot))

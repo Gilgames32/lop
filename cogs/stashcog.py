@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from util.const import *
+from util.loghelper import log_cog_load, log_command
 from util.msgutil import *
 from posts.supported import anypost
 from util.whook import threadhook_send
@@ -12,7 +13,7 @@ from util.urlparser import downloadpath
 class StashCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
 
     
     # twitter markdown with extra steps
@@ -22,6 +23,7 @@ class StashCog(commands.Cog):
     async def impersonate(
         self, interaction: discord.Interaction, link: str, impersonate: bool = True
     ):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
@@ -41,6 +43,7 @@ class StashCog(commands.Cog):
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="fx", description="fix embeds")
     async def fx(self, interaction: discord.Interaction, link: str):
+        log_command(interaction)
         await interaction.response.defer()
 
         try:

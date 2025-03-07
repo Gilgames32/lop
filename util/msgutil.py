@@ -3,6 +3,8 @@ from util.const import dev
 import re
 from discord.utils import escape_markdown
 
+from util.loghelper import log
+
 # return uniform embed for errors
 def errorembed(error: str):
     embed = discord.Embed(color=0xFF6700)
@@ -32,6 +34,7 @@ async def devcheck(interaction: discord.Interaction):
     if interaction.user.id == dev:
         return True
     else:
+        log.warning(f"Unauthorized access from {interaction.user.mention} {interaction.user.name}")
         await errorrespond(interaction, f"Only <@{dev}> is allowed to use this command")
         return False
 

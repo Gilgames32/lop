@@ -5,17 +5,20 @@ from discord.ext import commands
 import requests
 import io
 
+from util.loghelper import log_cog_load, log_command
+
 
 class RandomFoxCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
 
     # send a random fox
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="fox", description="send an image of a fox")
     async def random_fox(self, interaction: discord.Interaction):
+        log_command(interaction)
         await interaction.response.defer()
         try:
             img = requests.get("https://api.tinyfox.dev/img?animal=fox").content
@@ -56,6 +59,7 @@ class RandomFoxCog(commands.Cog):
         ]
     )
     async def random_animals(self, interaction: discord.Interaction, animal: app_commands.Choice[str]):
+        log_command(interaction)
         await interaction.response.defer()
         try:
             img = requests.get(f"https://api.tinyfox.dev/img?animal={animal.value}").content

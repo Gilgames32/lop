@@ -5,6 +5,7 @@ from discord.ext import commands
 import os
 from pysaucenao import SauceNao
 
+from util.loghelper import log_cog_load
 from util.msgutil import *
 
 
@@ -17,7 +18,8 @@ class SauceCog(commands.Cog):
             callback=self.saucefind,
         )
         self.bot.tree.add_command(self.ctx_menu)
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
+
 
     # reverse image search with saucenao
     async def saucefind(

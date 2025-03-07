@@ -5,6 +5,7 @@ from discord.ext import commands
 import io
 from urllib.parse import quote_plus
 
+from util.loghelper import log_cog_load, log_command
 from util.msgutil import devcheck, errorembed, errorrespond
 
 import caption.captionredux
@@ -13,13 +14,14 @@ import neptunfej.generate
 class CaptionCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
 
     # caption gifs and stuff
     @app_commands.allowed_installs(guilds=False, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="caption", description="caption media")
     async def captioning(self, interaction: discord.Interaction, link: str = None, text: str = "forgot the caption", file: discord.Attachment = None, force_gif: bool = False, gif_transparency: bool = False, echo: bool = False) -> None:
+        log_command(interaction)
         if not await devcheck(interaction):
             return
 
@@ -43,6 +45,7 @@ class CaptionCog(commands.Cog):
     @app_commands.command(name="neptun", description="/pa")
     async def neptun(self, interaction: discord.Interaction, text: str = "forgot the caption", reverse: bool = False) -> None:
         # what could go wrong letting people use this command :clueless:
+        log_command(interaction)
         await interaction.response.defer()
         try:
             with io.BytesIO() as image_binary:
@@ -107,6 +110,7 @@ class CaptionCog(commands.Cog):
         title: str = "Achievement Get!",
         desc: str = "The cake is a lie",
     ) -> None:
+        log_command(interaction)
         await interaction.response.send_message(
             f"https://skinmc.net/achievement/{icon if isinstance(icon, int) else icon.value}/{quote_plus(title)}/{quote_plus(desc)}"
         )

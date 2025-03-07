@@ -6,6 +6,7 @@ import time
 
 from feeds.supportedfeeds import FEEDPATTERNS, anyfeed
 from util.const import *
+from util.loghelper import log_cog_load, log, log_command
 from util.msgutil import *
 from util.whook import threadhook_send
 
@@ -16,29 +17,32 @@ class RSSCog(commands.GroupCog, group_name='rss'):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.rss_parse_all.start()
-        print("Loaded", __class__.__name__)
+        log_cog_load(self)
 
 
     @tasks.loop(hours=2)
     async def rss_parse_all(self):
-        print("Parsing rss feeds")
+        log.info("Parsing rss feeds")
         
         before = time.time()
         after = conf["last_sync"]
 
-        for feed_url, channels in conf["rss"].items():
-            # fetch feed and posts
-            feed = anyfeed(feed_url)
-            if not feed:
-                continue
-            feed.fetch_new_entries(after, before)
-            posts = reversed(feed.get_posts())
-            
-            for post in posts:
-                await post.fetch()
-                for channel_id in channels:
-                    channel = self.bot.get_channel(channel_id)
-                    await threadhook_send(channel, self.bot, post.get_message(), post.get_username(), post.get_avatar())
+        try:
+            for feed_url, channels in conf["rss"].items():
+                # fetch feed and posts
+                feed = anyfeed(feed_url)
+                if not feed:
+                    continue
+                feed.fetch_new_entries(after, before)
+                posts = reversed(feed.get_posts())
+                
+                for post in posts:
+                    await post.fetch()
+                    for channel_id in channels:
+                        channel = self.bot.get_channel(channel_id)
+                        await threadhook_send(channel, self.bot, post.get_message(), post.get_username(), post.get_avatar())
+        except Exception as e:
+            log.error(f"Error parsing feeds: {e}")
                 
         
         conf["last_sync"] = before
@@ -52,6 +56,7 @@ class RSSCog(commands.GroupCog, group_name='rss'):
 
     @app_commands.command(name="fetch", description="force fetch rss feeds")
     async def forcefetch(self, interaction: discord.Interaction):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
@@ -61,11 +66,13 @@ class RSSCog(commands.GroupCog, group_name='rss'):
     
     @app_commands.command(name="supported", description="list all sites with extra support")
     async def supported(self, interaction: discord.Interaction):
+        log_command(interaction)
         await interaction.response.send_message("\n".join(map(lambda x: f"{x}: `{FEEDPATTERNS[x][0]}`", FEEDPATTERNS)), ephemeral=True)
 
 
     @app_commands.command(name="add", description="add an rss feed")
     async def addfeed(self, interaction: discord.Interaction, feed: str):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
@@ -84,6 +91,7 @@ class RSSCog(commands.GroupCog, group_name='rss'):
     
     @app_commands.command(name="remove", description="remove an rss feed")
     async def rmfeed(self, interaction: discord.Interaction, feed: str):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
@@ -102,6 +110,7 @@ class RSSCog(commands.GroupCog, group_name='rss'):
     
     @app_commands.command(name="list", description="list all feeds")
     async def lsfeeds(self, interaction: discord.Interaction):
+        log_command(interaction)
         if not await devcheck(interaction):
             return
         
