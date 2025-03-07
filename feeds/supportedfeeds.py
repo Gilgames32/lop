@@ -18,7 +18,7 @@ def anyfeed(url: str) -> Feed:
     url = url.split("?")[0]
 
     for domain, (pattern, feed_class) in FEEDPATTERNS.items():
-        if domain in url and re.search(pattern, url):
+        if re.search(pattern, url):
             return feed_class(url)
     
     return Feed(url)

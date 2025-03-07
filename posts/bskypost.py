@@ -9,7 +9,7 @@ bsky.login('kapucni.bsky.social', os.getenv("BSKYPASS"))
 
 class BskyPost(Post):
     _platform = "Bluesky"
-    _prefix = "@"
+    _prefix = ""
 
     async def fetch(self):
         if self._fetched:

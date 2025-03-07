@@ -6,6 +6,8 @@ import requests
 from selenium import webdriver
 import re
 
+from util.loghelper import log
+
 class NitterFeed(Feed):
     POST_PATTERN = r"https://nitter.poast.org/([^/]+)/status/(\d+)"
     cookies_cache = {}
@@ -27,7 +29,7 @@ class NitterFeed(Feed):
         if response.status_code != 200:
             # retry by refetching the cookies
             NitterFeed.cookies_cache = NitterFeed.cookiegen("https://nitter.poast.org/kapucni_/rss")
-            print("New cookies:", NitterFeed.cookies_cache)
+            log.info(f"New cookies: {NitterFeed.cookies_cache}")
             response = requests.get('https://nitter.poast.org/kapucni_/rss', headers=Feed.HEADERS, cookies=NitterFeed.cookies_cache)
             if response.status_code != 200:
                 raise Exception("Failed to fetch feed")
