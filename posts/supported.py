@@ -22,7 +22,7 @@ def anypost(url: str) -> Post:
     }
 
     for domain, (pattern, post_class) in patterns.items():
-        if domain in url and re.search(pattern, url):
+        if re.search(pattern, url):
             return post_class(url)
     
     return None

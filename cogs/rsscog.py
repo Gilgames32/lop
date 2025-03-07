@@ -19,7 +19,7 @@ class RSSCog(commands.GroupCog, group_name='rss'):
         print("Loaded", __class__.__name__)
 
 
-    @tasks.loop(hours=4)
+    @tasks.loop(hours=2)
     async def rss_parse_all(self):
         print("Parsing rss feeds")
         
