@@ -5,7 +5,7 @@ from posts.post import Post, PostType
 
 
 class RSSPost(Post):
-    DEFAULT_AVATAR = "https://raw.githubusercontent.com/Gilgames32/lop/main/lop_pfp.png"
+    DEFAULT_AVATAR = "https://raw.githubusercontent.com/Gilgames32/lop/main/misc/lop_pfp.png"
     
     def __init__(self, item, feed):
         super().__init__("")

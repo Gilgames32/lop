@@ -92,6 +92,9 @@ class RedditPost(Post):
             if hasattr(submission, "url"):
                 self._text = submission.url
 
+        if self._thumbnail == "nsfw":
+            self._thumbnail = "https://raw.githubusercontent.com/Gilgames32/lop/main/misc/nsfw.png"
+
         await super().fetch()
 
     async def fetch(self):

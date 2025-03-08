@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/Gilgames32/lop/main/lop_pfp.png" width="128"> Lop#6400
+# <img src="https://raw.githubusercontent.com/Gilgames32/lop/main/misc/lop_pfp.png" width="128"> Lop#6400
 
 [![Python application](https://github.com/Gilgames32/lop/actions/workflows/python-app.yml/badge.svg)](https://github.com/Gilgames32/lop/actions/workflows/python-app.yml) ![GitHub license](https://img.shields.io/github/license/Gilgames32/lop.svg)
 
