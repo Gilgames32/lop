@@ -14,23 +14,23 @@ class NitterFeed(Feed):
 
     def cookiegen(url):
         options = webdriver.FirefoxOptions()
-        options.add_argument('--headless')
+        options.add_argument("--headless")
 
         with webdriver.Firefox(options=options) as driver:
             driver.get(url)
             cookies = driver.get_cookies()
             driver.quit()
 
-        return {cookie['name']: cookie['value'] for cookie in cookies} # i love python
+        return {cookie["name"]: cookie["value"] for cookie in cookies} # i love python
 
     def fetch_feed(self):
-        response = requests.get('https://nitter.poast.org/kapucni_/rss', headers=Feed.HEADERS, cookies=NitterFeed.cookies_cache)
+        response = requests.get(self.url, headers=Feed.HEADERS, cookies=NitterFeed.cookies_cache)
         
         if response.status_code != 200:
             # retry by refetching the cookies
-            NitterFeed.cookies_cache = NitterFeed.cookiegen("https://nitter.poast.org/kapucni_/rss")
+            NitterFeed.cookies_cache = NitterFeed.cookiegen(self.url)
             log.info(f"New cookies: {NitterFeed.cookies_cache}")
-            response = requests.get('https://nitter.poast.org/kapucni_/rss', headers=Feed.HEADERS, cookies=NitterFeed.cookies_cache)
+            response = requests.get(self.url, headers=Feed.HEADERS, cookies=NitterFeed.cookies_cache)
             if response.status_code != 200:
                 raise Exception("Failed to fetch feed")
         

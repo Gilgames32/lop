@@ -23,6 +23,7 @@ class Tweet(Post):
             if not match:
                 raise Exception("Invalid tweet link")
         
+        self._author = match.group(1)
         self._id = match.group(2)
 
         self._url = f"https://twitter.com/{self._author}/status/{self._id}"

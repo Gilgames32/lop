@@ -87,6 +87,11 @@ class RedditPost(Post):
         elif self._type is PostType.TEXT:
             self._text = submission.selftext
 
+        elif self._type is PostType.UNKNOWN:
+            # likely a link post
+            if hasattr(submission, "url"):
+                self._text = submission.url
+
         await super().fetch()
 
     async def fetch(self):

@@ -17,7 +17,7 @@ file_handler = logging.FileHandler(LOGSPATH)
 file_handler.setLevel(logging.INFO)
 
 # format
-formatter = logging.Formatter('%(asctime)s\t%(levelname)s\t%(message)s')
+formatter = logging.Formatter("%(asctime)s\t%(levelname)s\t%(message)s")
 
 console_handler.setFormatter(formatter)
 log.addHandler(console_handler)

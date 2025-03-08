@@ -5,7 +5,7 @@ from posts.post import Post
 from posts.rsspost import RSSPost
 
 class Feed(): 
-    HEADERS = {'User-Agent': "Lop"}
+    HEADERS = {"User-Agent": "Lop"}
     
     def __init__(self, url: str):
         self.url = url

@@ -13,7 +13,7 @@ from util.whook import threadhook_send
 
 
 
-class RSSCog(commands.GroupCog, group_name='rss'):
+class RSSCog(commands.GroupCog, group_name="rss"):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.rss_parse_all.start()
@@ -123,10 +123,6 @@ class RSSCog(commands.GroupCog, group_name='rss'):
             await interaction.response.send_message("No feeds found", ephemeral=True)
         else:
             await interaction.response.send_message("\n".join(map(lambda x: f"`{x}`", channel_feeds)), ephemeral=True)
-
-        
-                
-
 
         
 async def setup(bot: commands.Bot) -> None:

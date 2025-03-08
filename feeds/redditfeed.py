@@ -6,7 +6,7 @@ import requests
 
 class RedditFeed(Feed):
     def fetch_feed(self):
-        response = requests.get('https://www.reddit.com/r/Szormok_AVE/.rss', headers=Feed.HEADERS)
+        response = requests.get(self.url, headers=Feed.HEADERS)
         self.feed = feedparser.parse(response.text)
 
     def get_posts(self) -> list[RedditPost]:

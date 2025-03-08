@@ -5,7 +5,7 @@ from atproto import Client
 from posts.post import Post, PostType
 
 bsky = Client()
-bsky.login('kapucni.bsky.social', os.getenv("BSKYPASS"))
+bsky.login("kapucni.bsky.social", os.getenv("BSKYPASS"))
 
 class BskyPost(Post):
     _platform = "Bluesky"
@@ -15,7 +15,7 @@ class BskyPost(Post):
         if self._fetched:
             return
         
-        match = re.search(r'https://bsky\.app/profile/([^/]+)/post/([^/]+)', self._url)
+        match = re.search(r"https://bsky\.app/profile/([^/]+)/post/([^/]+)", self._url)
         if not match:
             raise Exception("Invalid Bluesky link")
 
@@ -33,12 +33,12 @@ class BskyPost(Post):
         if embed_media:
             if hasattr(embed_media, "images"):
                 for media in embed_media.images:
-                    ext = media.image.mime_type.split('/')[-1]
+                    ext = media.image.mime_type.split("/")[-1]
                     self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.{ext}")
                 self._type = PostType.IMAGE
             elif hasattr(embed_media, "video"):
                 # TODO thumbnail
-                ext = embed_media.video.mime_type.split('/')[-1]
+                ext = embed_media.video.mime_type.split("/")[-1]
                 self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={embed_media.video.ref.link}&.{ext}")
                 self._type = PostType.VIDEO
             
