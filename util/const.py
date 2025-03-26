@@ -1,16 +1,19 @@
 import os
+import sys
 import json
 from dotenv import load_dotenv
 
 
 # save jsons
 def savejson(jsonname: str, jdata):
+    os.chdir(sys.path[0])
     with open(f"{jsonname}", "w+") as outpoot:
         json.dump(jdata, outpoot, sort_keys=True, indent=4)
 
 
 # load jsons
 def loadjson(jsonname: str) -> dict:
+    os.chdir(sys.path[0])
     with open(f"{jsonname}", "r") as inpoot:
         return json.load(inpoot)
 

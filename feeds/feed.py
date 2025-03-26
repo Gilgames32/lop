@@ -24,7 +24,7 @@ class Feed():
         self.entries = sorted(self.entries, key=lambda entry: calendar.timegm(entry.published_parsed))
 
         for entry in self.entries:
-            log.info(f"New post at {entry.published} - {entry.title}")
+            log.info(f"New post at {entry.published} - {getattr(entry, 'link', None)}")
 
     def get_posts(self) -> list[Post]:
         return list(map(lambda entry: RSSPost(entry, self.feed), self.entries))
