@@ -28,7 +28,7 @@ log.addHandler(file_handler)
 
 # NOTE: due to some typechecking magic and me not wanting to figure it out, this isnt a decorator
 def log_command(interaction: discord.Interaction):
-    log.info(f"{interaction.user.mention} {interaction.user.name} in {interaction.channel.mention} {interaction.channel.name} called /{interaction.command.name}")
+    log.info(f"{interaction.user.mention} {interaction.user.name} in <#{interaction.channel.id}> {getattr(interaction.channel, 'name', 'DM')} called /{interaction.command.name}")
 
 def log_cog_load(cog):
     log.info(f"Loaded cog: {cog.__class__.__name__}")
