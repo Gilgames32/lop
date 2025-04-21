@@ -27,6 +27,8 @@ class SauceCog(commands.Cog):
     ):
         if not await devcheck(interaction):
             return
+        
+        await interaction.response.defer(ephemeral=True)
 
         piclinks = getattachmenturls(message)
 
@@ -34,7 +36,7 @@ class SauceCog(commands.Cog):
             try:
                 results = await self.sauceapi.from_url(piclinks[0])
             except any:
-                await errorrespond(interaction, "Something went wrong")
+                await errorfollowup(interaction, "Something went wrong")
                 return
 
             if len(results) != 0:
@@ -60,13 +62,13 @@ class SauceCog(commands.Cog):
                 embed.set_footer(
                     text=f"limit {results.short_remaining}s {results.long_remaining}d"
                 )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
             else:
-                await errorrespond(interaction, "Sauce not found")
+                await errorfollowup(interaction, "Sauce not found")
 
         else:
-            await errorrespond(
+            await errorfollowup(
                 interaction, "The message must contain one and only one attachment"
             )
 

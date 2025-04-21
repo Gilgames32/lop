@@ -16,6 +16,10 @@ def errorembed(error: str):
 async def errorrespond(interaction: discord.Interaction, error: str):
     await interaction.response.send_message(embed=errorembed(error), ephemeral=True)
 
+# followup an interaction with uniform embeds
+async def errorfollowup(interaction: discord.Interaction, error: str):
+    await interaction.followup.send(embed=errorembed(error), ephemeral=True)
+
 
 # gets attachment urls and embed urls from a message
 def getattachmenturls(message: discord.Message):
