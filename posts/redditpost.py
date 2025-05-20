@@ -57,6 +57,7 @@ class RedditPost(Post):
         if self._type is PostType.IMAGE:
             self._media.append(submission.url)
             self._thumbnail = submission.thumbnail
+            self._text = submission.selftext
         
         elif self._type is PostType.GALLERY:
             image_dict = submission.media_metadata

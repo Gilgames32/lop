@@ -58,9 +58,12 @@ class Post:
     def get_username(self) -> str:
         return self._prefix + self._author
 
-    def get_message(self, include_author = False, allow_markdown_in_body = False, escape_embed_links = True) -> str:
+    def get_message(self, include_author = False) -> str:
         if not self._fetched:
             raise Exception("The post was not fetched")
+        
+        escape_embed_links = self._type in [PostType.IMAGE, PostType.VIDEO, PostType.GALLERY]
+        allow_markdown_in_body = self._type in [PostType.TEXT, PostType.POLL]
         
         # title
         if self._title:
