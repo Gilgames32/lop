@@ -11,15 +11,20 @@ An oddly specific Discord bot written in Python.
 - Random animal pics using the [tinyfox api](https://tinyfox.dev/)
 - Auto download art from specific channels
 - Reverse image search using [SauceNAO](https://saucenao.com/)
-- RSS feeds (WIP)
+- Various Image generators
+- RSS feeds with extra support for:
+    - bsky
+    - reddit
+    - twitter (experimental)
 
 ## Contributing
 
 Contributions are welcome! For more info reach out to me in the server below!
 
 ## Discord
-[Server invite](https://discord.gg/X46A3CCZAE) to labowor
 
 [Lop#6400](<https://discord.com/users/954628626463207464>) - the bot
 
-[gilgman](<https://discord.com/users/954419840251199579>) - the developer
+[gilgames32](<https://discord.com/users/954419840251199579>) - the developer
+
+[Labowor](<https://discord.gg/X46A3CCZAE>) - support server
