@@ -1,7 +1,8 @@
 from enum import Enum
 from discord import Embed
+import textwrap
 
-from util.msgutil import escape_markdown_extra
+from util.msgutil import escape_markdown_extra, unembed_links
 from util.urlparser import download, downloadembed
 
 
@@ -18,6 +19,7 @@ class Post:
     # TODO: should revrite prolly
     _prefix = ""
     _platform = "unknown"
+    _max_characters = 2000
 
     def __init__(self, url: str):
         # common
@@ -63,40 +65,55 @@ class Post:
             raise Exception("The post was not fetched")
         
         escape_embed_links = self._type in [PostType.IMAGE, PostType.VIDEO, PostType.GALLERY]
-        allow_markdown_in_body = self._type in [PostType.TEXT, PostType.POLL]
         
-        # title
-        if self._title:
-            message = f"**{escape_markdown_extra(self._title, escape_embed_links)}**\n\n"
-        else:
-            message = ""
+        title = self.get_md_title(escape_embed_links)
+        body = self.get_md_body(escape_embed_links)
+        footer = self.get_md_footer(include_author)
+        footer_media = self.get_md_footer_media()
 
+        length = len(title) + len(footer)
+
+        footer_media = textwrap.shorten(footer_media, self._max_characters - length)
+        length += len(footer_media)
+        body = textwrap.shorten(body, self._max_characters - length)
+
+        return title + body + footer + footer_media
+    def get_md_title(self, escape_embed_links) -> str:
+        if self._title:
+            return f"**{escape_markdown_extra(self._title, escape_embed_links)}**\n\n"
+
+        return ""
+
+    def get_md_body(self, escape_embed_links) -> str:
+        body = ""
+        
         # text
         if self._text:
-            message += f"{self._text if allow_markdown_in_body else escape_markdown_extra(self._text, escape_embed_links)}\n"
-            if not self._title:
-                message += "\n"
+            body += f"{unembed_links(self._text) if escape_embed_links else self._text}\n"
 
         # poll
         for option in self._poll_options:
-            message += f"- {option}\n"
+            body += f"- {option}\n"
 
-        # footer
-        message += f"-# Posted "
+        return body
+
+    def get_md_footer(self, include_author) -> str:
+        footer = f"\n-# Posted "
         if include_author:
-            message += f"by {self._prefix}{escape_markdown_extra(self._author)} "
-        message += f"on [{self._platform}](<{self._url}>) "
+            footer += f"by {self._prefix}{escape_markdown_extra(self._author)} "
+        footer += f"on [{self._platform}](<{self._url}>) "
 
-        # media
+        return footer
+
+    def get_md_footer_media(self) -> str:
+        media_links = ""
         if self._type in [PostType.IMAGE, PostType.VIDEO]:
-            message += f"[.]({self._media[0]})"
+            media_links += f"[.]({self._media[0]})"
         elif self._type == PostType.GALLERY:
             for url in self._media:
-                message += f"[.]({url}) "
-
-        if len(message) > 2000:
-            message = " ".join(message[:1997].split(" ")[:-1]) + "..." # profound mental retardation
-        return message
+                media_links += f"[.]({url}) "
+        
+        return media_links
     
     def download(self, path: str) -> Embed:
         if not self._fetched:

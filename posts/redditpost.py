@@ -54,10 +54,11 @@ class RedditPost(Post):
         # type
         self._type = RedditPost.post_type(submission)
 
+        self._text = submission.selftext if submission.selftext else None
+
         if self._type is PostType.IMAGE:
             self._media.append(submission.url)
             self._thumbnail = submission.thumbnail
-            self._text = submission.selftext
         
         elif self._type is PostType.GALLERY:
             image_dict = submission.media_metadata
@@ -80,13 +81,12 @@ class RedditPost(Post):
             self._media.append(video_url)
             self._thumbnail = submission.thumbnail
 
-
         elif self._type is PostType.POLL:
             self._text = submission.selftext.split("\n\n[View Poll]")[0]
             self._poll_options = [o.text for o in submission.poll_data.options]
 
         elif self._type is PostType.TEXT:
-            self._text = submission.selftext
+            pass
 
         elif self._type is PostType.UNKNOWN:
             # likely a link post

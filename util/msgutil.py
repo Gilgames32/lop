@@ -47,6 +47,14 @@ def escape_markdown_extra(text: str, unembed_liks = False) -> str:
     text = escape_markdown(text)
 
     if unembed_liks:
-        text = re.sub(r"(https?://\S+)", r"<\1>", text)
+        text = unembed_links(text)
     
+    return text
+
+def unembed_links(text: str) -> str:
+    # unembed links in the text
+    # first unembed []()
+    # then ununembedded s
+    text = re.sub(r"(?<!\]\()(https?://[^\s\)]+)", r"<\1>", text)
+    text = re.sub(r"\[([^\]]+)\]\((https?://[^\)]+)\)", r"[\1](<\2>)", text)
     return text
