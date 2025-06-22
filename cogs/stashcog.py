@@ -42,14 +42,17 @@ class StashCog(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @app_commands.command(name="fx", description="fix embeds")
-    async def fx(self, interaction: discord.Interaction, link: str):
+    async def fx(self, interaction: discord.Interaction, link: str, short: bool = False):
         log_command(interaction)
         await interaction.response.defer()
 
         try:
             post = anypost(link)
             await post.fetch()
-            await interaction.followup.send(post.get_message(True))
+            if short:
+                await interaction.followup.send(post.get_short_message(True))
+            else:
+                await interaction.followup.send(post.get_message(True))
         except Exception as e:
             await interaction.followup.send(embed=errorembed(str(e)[:2000]))
 

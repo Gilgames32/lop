@@ -52,9 +52,24 @@ def escape_markdown_extra(text: str, unembed_liks = False) -> str:
     return text
 
 def unembed_links(text: str) -> str:
-    # unembed links in the text
-    # first unembed []()
-    # then ununembedded s
-    text = re.sub(r"(?<!\]\()(https?://[^\s\)]+)", r"<\1>", text)
+    # replace [link](link) with link
+    text = re.sub(r"\[https?://[^\s\)\]]+\]\((https?://[^\s\)\]]+)\)", r"\1", text)
+
+    # replace normal links with <link>
+    text = re.sub(r"(?<!(\]\())(https?://[^\s\)\]]+)", r"<\2>", text)
+    
+    # replace markdown links with [](<link>)
     text = re.sub(r"\[([^\]]+)\]\((https?://[^\)]+)\)", r"[\1](<\2>)", text)
     return text
+
+# this is utterly stupid
+def truncate(text: str, max_length: int, placeholder: str = "...") -> str:
+    if max_length <= 0:
+        return ""
+    if not text:
+        return ""
+    if len(text) <= max_length:
+        return text
+    
+    max_length -= len(placeholder)
+    return " ".join(text[:max_length].split(" ")[:-1]) + placeholder

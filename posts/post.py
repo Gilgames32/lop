@@ -1,8 +1,7 @@
 from enum import Enum
 from discord import Embed
-import textwrap
 
-from util.msgutil import escape_markdown_extra, unembed_links
+from util.msgutil import escape_markdown_extra, unembed_links, truncate
 from util.urlparser import download, downloadembed
 
 
@@ -71,16 +70,21 @@ class Post:
         footer = self.get_md_footer(include_author)
         footer_media = self.get_md_footer_media()
 
-        length = len(title) + len(footer)
+        linebreaks = 3
+        length = len(title) + len(footer) + linebreaks
 
-        footer_media = textwrap.shorten(footer_media, self._max_characters - length)
+        footer_media = truncate(footer_media, self._max_characters - length)
         length += len(footer_media)
-        body = textwrap.shorten(body, self._max_characters - length)
+        body = truncate(body, self._max_characters - length)
 
-        return title + body + footer + footer_media
+        if title and body:
+            return (title + "\n\n" + body + "\n" + footer + footer_media).strip()
+        else:
+            return (title + body + "\n" + footer + footer_media).strip()
+    
     def get_md_title(self, escape_embed_links) -> str:
         if self._title:
-            return f"**{escape_markdown_extra(self._title, escape_embed_links)}**\n\n"
+            return f"**{escape_markdown_extra(self._title, escape_embed_links)}**"
 
         return ""
 
@@ -89,16 +93,15 @@ class Post:
         
         # text
         if self._text:
-            body += f"{unembed_links(self._text) if escape_embed_links else self._text}\n"
+            body += f"{unembed_links(self._text) if escape_embed_links else self._text}"
 
         # poll
-        for option in self._poll_options:
-            body += f"- {option}\n"
+        body += "\n".join(f"- {i}" for i in self._poll_options)
 
         return body
 
     def get_md_footer(self, include_author) -> str:
-        footer = f"\n-# Posted "
+        footer = f"-# Posted "
         if include_author:
             footer += f"by {self._prefix}{escape_markdown_extra(self._author)} "
         footer += f"on [{self._platform}](<{self._url}>) "
@@ -114,6 +117,17 @@ class Post:
                 media_links += f"[.]({url}) "
         
         return media_links
+
+    def get_short_message(self, include_author = False) -> str:
+        if not self._fetched:
+            raise Exception("The post was not fetched")
+        
+        footer = self.get_md_footer(include_author)
+        footer_media = self.get_md_footer_media()
+
+        footer_media = truncate(footer_media, self._max_characters - len(footer))
+
+        return (footer + footer_media).strip()
     
     def download(self, path: str) -> Embed:
         if not self._fetched:
