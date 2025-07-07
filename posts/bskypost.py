@@ -23,6 +23,7 @@ class BskyPost(Post):
         self._id = match.group(2)
 
         user = bsky.get_profile(self._author)
+        self._author = user.handle
         self._author_icon = user.avatar
 
         post = bsky.get_post(self._id, self._author)

@@ -1,3 +1,4 @@
+import os
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -5,7 +6,9 @@ from discord.ext import commands
 import io
 from urllib.parse import quote_plus
 
-from util.loghelper import log_cog_load, log_command
+import ffmpeg
+
+from util.loghelper import log_cog_load, log_command, log_info
 from util.msgutil import *
 
 import caption.captionredux
@@ -33,11 +36,21 @@ class CaptionCog(commands.Cog):
             return
 
         await interaction.response.defer()
+        path = os.getcwd()
         try:
             out = caption.captionredux.caption(link, text, force_gif, gif_transparency)
             await interaction.followup.send(text if echo else None, file=discord.File(out))
         except Exception as e:
-            await interaction.followup.send(embed=errorembed(str(e)))
+            if isinstance(e, ffmpeg.Error):
+                log_info(f"FFmpeg error:")
+                for line in e.stderr.splitlines():
+                    log_info(line.decode())
+                await interaction.followup.send(embed=errorembed("FFmpeg error, see `/logs` for details"))
+            else:
+                await interaction.followup.send(embed=errorembed(str(e)))
+        finally:
+            os.chdir(path)
+
 
     # neptunfej
     @app_commands.allowed_installs(guilds=True, users=True)

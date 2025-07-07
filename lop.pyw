@@ -64,10 +64,10 @@ async def get_logs(interaction: discord.Interaction):
     if not await devcheck(interaction):
         return
     
+    await interaction.response.defer(ephemeral=True)
+    
     if not os.path.exists(LOGSPATH):
         await interaction.followup.send("No logs found")
-    
-    await interaction.response.defer(ephemeral=True)
     
     wall_of_logs = ""
     with open(LOGSPATH, "r") as f:
