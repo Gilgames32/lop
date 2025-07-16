@@ -66,7 +66,9 @@ class RedditPost(Post):
                 pattern = r"/([^/?]+)(?:\?|$)"
                 self._media.append(
                     "https://i.redd.it/"
-                    + re.search(pattern, image_dict[i]["s"]["u"]).group(1)
+                    + image_dict[i]["id"] 
+                    + "."
+                    + image_dict[i]["m"].split("/")[-1]
                 )
             self._thumbnail = submission.thumbnail
 
