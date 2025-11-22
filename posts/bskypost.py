@@ -1,11 +1,9 @@
-import os
 import re
-from atproto import Client
+import requests
 
 from posts.post import Post, PostType
 
-bsky = Client()
-bsky.login("kapucni.bsky.social", os.getenv("BSKYPASS"))
+BSKY_ENDPOINT = "https://public.api.bsky.app/xrpc/"
 
 class BskyPost(Post):
     _platform = "Bluesky"
@@ -22,32 +20,55 @@ class BskyPost(Post):
         self._author = match.group(1)
         self._id = match.group(2)
 
-        user = bsky.get_profile(self._author)
-        self._author = user.handle
-        self._author_icon = user.avatar
+        re_user = requests.get(BSKY_ENDPOINT + "app.bsky.actor.getProfile", params={
+            "actor": self._author
+        })
+        if re_user.status_code != 200:
+            raise Exception("Failed to fetch Bluesky user profile")
+        user_data = re_user.json()
+        self._author = user_data["handle"]
+        self._author_icon = user_data["avatar"]
+        udid = user_data["did"]
 
-        post = bsky.get_post(self._id, self._author)
-        self._text = post.value.text
+        re_post = requests.get(BSKY_ENDPOINT + "app.bsky.feed.getPostThread", params={
+            "uri": f"at://{udid}/app.bsky.feed.post/{self._id}",
+            "depth": 0,
+            "parentHeight": 0
+        })
+        if re_post.status_code != 200:
+            raise Exception("Failed to fetch Bluesky post")
+        post_data = re_post.json()
+        record_data = post_data["thread"]["post"]["record"]
 
-        embed_media = post.value.embed.media if hasattr(post.value.embed, "media") else post.value.embed if post.value.embed else None
+        self._text = record_data.get("text", "")
+        self._type = PostType.TEXT
 
-        if embed_media:
-            if hasattr(embed_media, "images"):
-                for media in embed_media.images:
-                    ext = media.image.mime_type.split("/")[-1]
-                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{user.did}/{media.image.ref.link}?.{ext}")
-                self._type = PostType.IMAGE
-            elif hasattr(embed_media, "video"):
-                # TODO thumbnail
-                ext = embed_media.video.mime_type.split("/")[-1]
-                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={user.did}&cid={embed_media.video.ref.link}&.{ext}")
+        embed_data = record_data.get("embed", None)
+        if embed_data:
+            # video
+            if embed_data.get("video", None):
+                embed_media = embed_data["video"]
+                ext = embed_media["mimeType"].split("/")[-1]
+                self._media.append(f"https://bsky.social/xrpc/com.atproto.sync.getBlob?did={udid}&cid={embed_media['ref']['$link']}&.{ext}")
+                self._thumbnail = post_data["thread"]["post"]["embed"]["thumbnail"]
                 self._type = PostType.VIDEO
             
-            if len(self._media) > 1:
-                self._type = PostType.GALLERY
+            else:
+                # gallery
+                if embed_data.get("media", None):
+                    embed_media = embed_data["media"]["images"]
+                # image
+                elif embed_data.get("images", None):
+                    embed_media = embed_data["images"]
+
+                for image in embed_media:
+                    image = image["image"]
+                    ext = image["mimeType"].split("/")[-1]
+                    if ext == "jpeg":
+                        ext = "png" # its that easy :3c 
+                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{udid}/{image['ref']['$link']}?.{ext}")
                 
-        else:
-            self._type = PostType.TEXT
+                self._type = PostType.GALLERY if len(self._media) > 1 else PostType.IMAGE
 
         await super().fetch()
         
