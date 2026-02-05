@@ -53,22 +53,23 @@ class BskyPost(Post):
                 self._thumbnail = post_data["thread"]["post"]["embed"]["thumbnail"]
                 self._type = PostType.VIDEO
             
-            else:
-                # gallery
-                if embed_data.get("media", None):
-                    embed_media = embed_data["media"]["images"]
-                # image
-                elif embed_data.get("images", None):
-                    embed_media = embed_data["images"]
+            # image
+            elif embed_data.get("images", None):
+                embed_media = embed_data["images"]
+                self._type = PostType.IMAGE
 
+            # gallery
+            elif embed_data.get("media", None):
+                embed_media = embed_data["media"]["images"]
+                self._type = PostType.GALLERY
+
+            if self._type in [PostType.IMAGE, PostType.GALLERY]:
                 for image in embed_media:
                     image = image["image"]
                     ext = image["mimeType"].split("/")[-1]
                     if ext == "jpeg":
                         ext = "png" # its that easy :3c 
-                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{udid}/{image['ref']['$link']}?.{ext}")
-                
-                self._type = PostType.GALLERY if len(self._media) > 1 else PostType.IMAGE
+                    self._media.append(f"https://cdn.bsky.app/img/feed_fullsize/plain/{udid}/{image['ref']['$link']}?.{ext}") 
 
         await super().fetch()
         
