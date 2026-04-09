@@ -86,7 +86,8 @@ class StashCog(commands.Cog):
 
             try:
                 await post.fetch()
-                await threadhook_send(message.channel, self.bot, post.get_message(True), message.author.display_name, message.author.display_avatar)
+                body = post.get_message(True) if not message.flags.silent else post.get_short_message(True)
+                await threadhook_send(message.channel, self.bot, body, message.author.display_name, message.author.display_avatar)
                 await message.delete()
             except Exception:
                 pass
