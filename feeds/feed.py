@@ -1,5 +1,6 @@
 import feedparser
 import calendar
+import requests
 
 from posts.post import Post
 from posts.rsspost import RSSPost
@@ -14,11 +15,18 @@ class Feed():
         self.feed = None
 
     def fetch_feed(self):
-        self.feed = feedparser.parse(self.url)
+        response = requests.get(self.url, headers=self.HEADERS, timeout=10)
+        if response.status_code != 200:
+            log.error(f"Failed to fetch feed {self.url} - {response.status_code}")
+            return
+        else:
+            self.feed = feedparser.parse(response.text)
 
     def fetch_new_entries(self, after: float, before: float):
         if not self.feed:
             self.fetch_feed()
+        if not self.feed:
+            return
 
         self.entries = filter(lambda entry: after < calendar.timegm(entry.published_parsed) <= before, self.feed.entries)
         self.entries = sorted(self.entries, key=lambda entry: calendar.timegm(entry.published_parsed))
