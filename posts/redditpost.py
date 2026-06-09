@@ -39,7 +39,7 @@ class RedditPost(Post):
             author = await reddit.redditor(submission.author.name)
             await author.load()
             self._author = author.name
-            self._author_icon = author.icon_img.split("?")[0]
+            self._author_icon = author.icon_img.split("?")[0] if hasattr(author, "icon_img") else None
         
         # platform
         self._platform = (
