@@ -38,6 +38,6 @@ loadconf()
 
 LOPDEBUG = conf["debug"]
 downloadpath = conf["downloadpath"]
-dev = conf["dev"]
+devs = conf["dev"]
 tostash_chid = conf["tostash"]
 

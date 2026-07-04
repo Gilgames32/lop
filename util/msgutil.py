@@ -1,5 +1,5 @@
 import discord
-from util.const import dev
+from util.const import devs
 import re
 from discord.utils import escape_markdown
 
@@ -35,11 +35,11 @@ def getattachmenturls(message: discord.Message):
 
 # checks if user is eligible for the interaction
 async def devcheck(interaction: discord.Interaction):
-    if interaction.user.id == dev:
+    if interaction.user.id in devs:
         return True
     else:
         log.warning(f"Unauthorized access from {interaction.user.mention} {interaction.user.name}")
-        await errorrespond(interaction, f"Only <@{dev}> is allowed to use this command")
+        await errorrespond(interaction, f"Only developers are allowed to use this command")
         return False
 
 def escape_markdown_extra(text: str, unembed_liks = False) -> str:
