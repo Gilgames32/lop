@@ -8,7 +8,7 @@ from urllib.parse import quote_plus
 
 import ffmpeg
 
-from util.loghelper import log_cog_load, log_command, log_info
+from util.loghelper import log_cog_load, log_command, log
 from util.msgutil import *
 
 import caption.captionredux
@@ -42,9 +42,9 @@ class CaptionCog(commands.Cog):
             await interaction.followup.send(text if echo else None, file=discord.File(out))
         except Exception as e:
             if isinstance(e, ffmpeg.Error):
-                log_info(f"FFmpeg error:")
+                log.info(f"FFmpeg error:")
                 for line in e.stderr.splitlines():
-                    log_info(line.decode())
+                    log.info(line.decode())
                 await interaction.followup.send(embed=errorembed("FFmpeg error, see `/logs` for details"))
             else:
                 await interaction.followup.send(embed=errorembed(str(e)))

@@ -32,7 +32,3 @@ def log_command(interaction: discord.Interaction):
 
 def log_cog_load(cog):
     log.info(f"Loaded cog: {cog.__class__.__name__}")
-
-def log_info(message: str):
-    log.info(message)
-
