@@ -53,15 +53,14 @@ class BskyPost(Post):
                 self._thumbnail = post_data["thread"]["post"]["embed"]["thumbnail"]
                 self._type = PostType.VIDEO
             
-            # image
             elif embed_data.get("images", None):
                 embed_media = embed_data["images"]
-                self._type = PostType.IMAGE
-
-            # gallery
-            elif embed_data.get("media", None):
-                embed_media = embed_data["media"]["images"]
-                self._type = PostType.GALLERY
+                # image
+                if len(embed_media) == 1:
+                    self._type = PostType.IMAGE
+                # gallery
+                else:
+                    self._type = PostType.GALLERY
 
             if self._type in [PostType.IMAGE, PostType.GALLERY]:
                 for image in embed_media:
