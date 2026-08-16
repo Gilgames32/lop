@@ -45,6 +45,8 @@ class BskyPost(Post):
 
         embed_data = record_data.get("embed", None)
         if embed_data:
+            if embed_data.get("media", None):
+                embed_data = embed_data["media"]
             # video
             if embed_data.get("video", None):
                 embed_media = embed_data["video"]
