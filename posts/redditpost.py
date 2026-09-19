@@ -75,7 +75,7 @@ class RedditPost(Post):
 
             # for audio we need to find the url that includes it
             if video["has_audio"]:
-                video_url = "https://rxddit.com/v" + submission.permalink
+                video_url = f"https://fxddit.com/v/{submission.subreddit_name_prefixed[2:]}/{submission.id}"
 
             self._media.append(video_url)
             self._thumbnail = submission.thumbnail
